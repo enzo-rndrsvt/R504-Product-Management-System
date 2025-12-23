@@ -6,7 +6,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test --passWithNoTests",
         "test:coverage": "react-scripts test --watchAll=false --coverage --passWithNoTests",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
         "format": "prettier --write ."
     },
     "dependencies": {
