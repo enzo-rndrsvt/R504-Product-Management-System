@@ -8,8 +8,7 @@
         "test": "jest",
         "test:coverage": "jest --coverage",
         "lint": "eslint . --fix",
-        "format": "npm run format --workspaces --if-present"
-
+        "format": "prettier --write ."
     },
     "dependencies": {
         "@eslint/js": "^9.39.1",

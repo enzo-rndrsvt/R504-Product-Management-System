@@ -6,9 +6,8 @@
         "build": "react-scripts build",
         "test": "react-scripts test --passWithNoTests",
         "test:coverage": "react-scripts test --watchAll=false --coverage --passWithNoTests",
-        "lint": "eslint . --fix",
-        "format": "npm run format --workspaces --if-present"
-
+        "lint": "eslint . --fix"
+        "format": "prettier --write ."
     },
     "dependencies": {
         "@eslint/js": "^9.39.1",
