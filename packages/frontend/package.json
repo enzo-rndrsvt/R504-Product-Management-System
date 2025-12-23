@@ -5,7 +5,8 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test --passWithNoTests",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "format": "prettier --write ."
     },
     "dependencies": {
         "@eslint/js": "^9.39.1",
