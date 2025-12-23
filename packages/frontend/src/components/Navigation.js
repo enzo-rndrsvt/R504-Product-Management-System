@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../services/api';
+import PropTypes from 'prop-types';
 
 const Navigation = ({ onLogout }) => {
   const navigate = useNavigate();
@@ -82,6 +83,10 @@ const Navigation = ({ onLogout }) => {
       </div>
     </nav>
   );
+};
+
+Navigation.propTypes = {
+  onLogout: Navigation.node.isRequired
 };
 
 export default Navigation;
