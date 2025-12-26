@@ -86,7 +86,7 @@ const Navigation = ({ onLogout }) => {
 };
 
 Navigation.propTypes = {
-  onLogout: Navigation.node.isRequired
+  onLogout: PropTypes.func.isRequired
 };
 
 export default Navigation;

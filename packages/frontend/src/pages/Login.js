@@ -101,7 +101,7 @@ const Login = ({ onLogin }) => {
 };
 
 Login.propTypes = {
-  onLogin: PropTypes.node.isRequired
+  onLogin: PropTypes.func.isRequired
 };
 
 export default Login;
