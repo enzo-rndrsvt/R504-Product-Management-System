@@ -1,4 +1,4 @@
-import globals from 'globals';
+import globals, { jest } from 'globals';
 import n from 'eslint-plugin-n';
 import unicorn from 'eslint-plugin-unicorn';
 import perfectionist from 'eslint-plugin-perfectionist';
@@ -22,13 +22,10 @@ export default defineConfig([
     languageOptions: {
       // globals: { ...sanitizeGlobals(globals.node) }
       globals: { ...globals.node }
+    },
+    env: {
+      jest: true,
+      circus: true
     }
-  },
-  {
-    files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'],
-    languageOptions: {
-      globals: { ...globals.node, ...globals.jest }
-    }
-  },
-  { files: ['**/*.js'], languageOptions: { sourceType: 'script' } }
+  }
 ]);
