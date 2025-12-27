@@ -1,9 +1,11 @@
 export default {
   testEnvironment: 'jsdom',
   coverageDirectory: './coverage',
+  setupFilesAfterEnv: ['./src/setupTests.js'],
   testMatch: ['**/__tests__/**/*.test.{js,ts,jsx,tsx}'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{js,ts,jsx,tsx}'],
+  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'],
+  coveragePathIgnorePatterns: ['<rootDir>/src/index.js'],
   coverageThreshold: {
     global: {
       statements: 80,

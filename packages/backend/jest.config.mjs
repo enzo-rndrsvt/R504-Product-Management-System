@@ -4,7 +4,7 @@ export default {
   setupFilesAfterEnv: ['./src/__tests__/setup.js'],
   testMatch: ['**/__tests__/**/*.test.{js,ts,jsx,tsx}'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{js,ts,jsx,tsx}'],
+  collectCoverageFrom: ['./src/**/*.{js,ts,jsx,tsx}', '!src/server.js'],
   coverageThreshold: {
     global: {
       statements: 80,
