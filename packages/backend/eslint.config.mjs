@@ -22,10 +22,6 @@ export default defineConfig([
     languageOptions: {
       // globals: { ...sanitizeGlobals(globals.node) }
       globals: { ...globals.node }
-    },
-    env: {
-      jest: true,
-      circus: true
     }
   }
 ]);
