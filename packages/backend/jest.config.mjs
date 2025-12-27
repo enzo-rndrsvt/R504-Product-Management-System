@@ -1,7 +1,7 @@
 export default {
   testEnvironment: 'node',
   coverageDirectory: './coverage',
-  setupFilesAfterEnv: ['./src/__tests__/setup.js'],
+  setupFilesAfterEnv: ['./src/setupTest.js'],
   testMatch: ['**/__tests__/**/*.test.{js,ts,jsx,tsx}'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.{js,ts,jsx,tsx}', '!src/server.js'],
