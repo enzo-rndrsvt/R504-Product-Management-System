@@ -9,8 +9,8 @@ import { defineConfig } from 'eslint/config';
 const sanitizeGlobals = (g) => Object.fromEntries(Object.entries(g).map(([k, v]) => [k.trim(), v]));
 
 export default defineConfig([
+  react.configs.flat.recommended,
   {
-    files: ['**/*.{js,mjs,cjs,jsx}'],
     plugins: {
       react,
       'react-hooks': reactHooks,
@@ -18,15 +18,18 @@ export default defineConfig([
       perfectionist,
       prettier: prettierPlugin
     },
-    rules: {
-      'prettier/prettier': ['error', { endOfLine: 'auto' }]
-    },
     languageOptions: {
-      globals: { ...sanitizeGlobals(globals.node) }
+      globals: {
+        ...sanitizeGlobals(globals.node),
+        ...globals.jest,
+        ...globals.browser
+      }
     },
     settings: {
       react: { version: 'detect' }
+    },
+    rules: {
+      'prettier/prettier': ['error', { endOfLine: 'auto' }]
     }
-  },
-  react.configs.flat.recommended
+  }
 ]);
