@@ -24,5 +24,11 @@ export default defineConfig([
       globals: { ...globals.node }
     }
   },
+  {
+    files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.jest }
+    }
+  },
   { files: ['**/*.js'], languageOptions: { sourceType: 'script' } }
 ]);
