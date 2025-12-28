@@ -46,6 +46,10 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/index.js"
     ],
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
     "coverageThreshold": {
       "global": {
         "statements": 80,
@@ -54,12 +58,14 @@
         "lines": 80
       }
     },
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
     "transformIgnorePatterns": [
-      "node_modules/(?!axios)/"
+      "node_modules/(?!axios)"
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.0-placeholder-for-preset-env.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

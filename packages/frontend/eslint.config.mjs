@@ -20,7 +20,7 @@ export default defineConfig([
     },
     languageOptions: {
       globals: {
-        ...sanitizeGlobals(globals.node),
+        ...sanitizeGlobals(globals.node)
       }
     },
     settings: {
