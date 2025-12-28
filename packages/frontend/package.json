@@ -46,10 +46,6 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/index.js"
     ],
-    "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/setupTests.js"
-    ],
     "coverageThreshold": {
       "global": {
         "statements": 80,
