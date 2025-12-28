@@ -9,14 +9,17 @@
     "start": "concurrently \"npm run start --workspace=backend\" \"npm run start --workspace=frontend\"",
     "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run start --workspace=frontend\"",
     "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspace=frontend",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
+    "lighthouse": "npm run build && lhci autorun",
     "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.26.3",
+    "@lhci/cli": "^0.14.0",
     "@eslint/js": "^9.39.1",
     "babel-jest": "^27.5.1",
     "concurrently": "^8.2.2",
