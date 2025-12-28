@@ -5,10 +5,9 @@ import perfectionist from 'eslint-plugin-perfectionist';
 import prettierPlugin from 'eslint-plugin-prettier';
 import { defineConfig } from 'eslint/config';
 
-// const sanitizeGlobals = (g) => Object.fromEntries(Object.entries(g).map(([k, v]) => [k.trim(), v]));
-
 export default defineConfig([
   {
+    files: ['**/*.{js,mjs,cjs}'],
     plugins: {
       n,
       unicorn,
@@ -19,19 +18,8 @@ export default defineConfig([
       'prettier/prettier': ['error', { endOfLine: 'auto' }]
     },
     languageOptions: {
-      // globals: { ...sanitizeGlobals(globals.node) }
       globals: {
-        ...globals.node,
-        ...globals.jest,
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        jest: 'readonly'
+        ...globals.node
       }
     }
   }

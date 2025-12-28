@@ -21,7 +21,6 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...sanitizeGlobals(globals.node),
-        ...globals.jest
       }
     },
     settings: {
@@ -29,6 +28,6 @@ export default defineConfig([
     },
     rules: {
       'prettier/prettier': ['error', { endOfLine: 'auto' }]
-    },
+    }
   }
 ]);
