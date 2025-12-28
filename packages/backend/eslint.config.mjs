@@ -1,4 +1,4 @@
-import globals, { jest } from 'globals';
+import globals from 'globals';
 import n from 'eslint-plugin-n';
 import unicorn from 'eslint-plugin-unicorn';
 import perfectionist from 'eslint-plugin-perfectionist';
@@ -9,7 +9,6 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    files: ['**/*.{js,mjs,cjs}'],
     plugins: {
       n,
       unicorn,
@@ -21,7 +20,19 @@ export default defineConfig([
     },
     languageOptions: {
       // globals: { ...sanitizeGlobals(globals.node) }
-      globals: { ...globals.node }
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly'
+      }
     }
   }
 ]);
