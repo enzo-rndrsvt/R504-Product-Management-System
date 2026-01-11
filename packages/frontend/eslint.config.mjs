@@ -18,9 +18,19 @@ export default defineConfig([
       perfectionist,
       prettier: prettierPlugin
     },
+    files: [
+      'src/**/*.{js,jsx}'
+    ],
+    ignores: [
+      'build/**',
+      'coverage/**',
+      'public/**',
+      'node_modules/**'
+    ],
     languageOptions: {
       globals: {
-        ...sanitizeGlobals(globals.node)
+        ...sanitizeGlobals(globals.node),
+        ...sanitizeGlobals(globals.browser)
       }
     },
     settings: {
