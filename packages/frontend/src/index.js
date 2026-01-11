@@ -6,6 +6,7 @@ import moment from 'moment';
 import 'moment/locale/fr';
 import 'moment/locale/es';
 import 'moment/locale/de';
+import './styles/index.css';
 
 window._ = _;
 window.moment = moment;
