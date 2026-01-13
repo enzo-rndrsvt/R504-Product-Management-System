@@ -6,6 +6,7 @@ import UserList from './pages/UserList';
 import ProductList from './pages/ProductList';
 import AddProduct from './pages/AddProduct';
 import Navigation from './components/Navigation';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = React.useState(!!localStorage.getItem('token'));
@@ -24,24 +25,26 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-neutral-50">
-        {isAuthenticated && <Navigation onLogout={refreshAuth} />}
-        <main className={isAuthenticated ? 'container-base' : ''}>
-          <Routes>
-            <Route path="/login" element={<Login onLogin={refreshAuth} />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/users" element={<UserList />} />
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route
-              path="/"
-              element={isAuthenticated ? <Navigate to="/products" replace /> : <Navigate to="/login" replace />}
-            />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+          {isAuthenticated && <Navigation onLogout={refreshAuth} />}
+          <main className={isAuthenticated ? 'container-base' : ''}>
+            <Routes>
+              <Route path="/login" element={<Login onLogin={refreshAuth} />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/users" element={<UserList />} />
+              <Route path="/products" element={<ProductList />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route
+                path="/"
+                element={isAuthenticated ? <Navigate to="/products" replace /> : <Navigate to="/login" replace />}
+              />
+            </Routes>
+          </main>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

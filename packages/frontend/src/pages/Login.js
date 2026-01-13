@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../services/api';
+import ThemeToggle from '../components/ThemeToggle';
 import PropTypes from 'prop-types';
 
 const Login = ({ onLogin }) => {
@@ -21,7 +22,8 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4 dark:bg-neutral-950">
+      <ThemeToggle />
       <div className="card w-full max-w-sm shadow-lg">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-neutral-900">Welcome Back</h1>
