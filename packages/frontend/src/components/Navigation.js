@@ -22,20 +22,20 @@ const Navigation = ({ onLogout }) => {
   })();
 
   return (
-    <nav className="bg-gray-800 text-white p-2 px-5 mb-5 flex justify-between items-center">
+    <nav className="mb-5 flex items-center justify-between bg-gray-800 p-2 px-5 text-white">
       <div>
-        <Link to="/users" className="text-white no-underline mr-5 hover:text-gray-300 transition">
+        <Link to="/users" className="mr-5 text-white no-underline transition hover:text-gray-300">
           Users
         </Link>
-        <Link to="/products" className="text-white no-underline hover:text-gray-300 transition">
+        <Link to="/products" className="text-white no-underline transition hover:text-gray-300">
           Products
         </Link>
       </div>
       <div className="flex items-center">
-        <span className="text-white mr-5">{greeting}</span>
+        <span className="mr-5 text-white">{greeting}</span>
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white border-0 p-2 px-4 rounded hover:bg-red-600 transition"
+          className="rounded border-0 bg-red-500 p-2 px-4 text-white transition hover:bg-red-600"
         >
           Logout
         </button>

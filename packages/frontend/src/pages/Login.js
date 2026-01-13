@@ -21,29 +21,29 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-5 shadow-md rounded-lg">
-      <h2 className="text-center mb-5 text-2xl font-bold">Login</h2>
-      {error && <div className="text-red-600 mb-2 p-2 bg-red-100 rounded">{error}</div>}
+    <div className="mx-auto max-w-sm rounded-lg p-5 shadow-md">
+      <h2 className="mb-5 text-center text-2xl font-bold">Login</h2>
+      {error && <div className="mb-2 rounded bg-red-100 p-2 text-red-600">{error}</div>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
-        <button type="submit" className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+        <button type="submit" className="rounded bg-green-500 p-2 text-white transition hover:bg-green-600">
           Login
         </button>
       </form>
-      <p className="text-center mt-5">
+      <p className="mt-5 text-center">
         Don&apos;t have an account?{' '}
         <Link to="/register" className="text-green-500 hover:underline">
           Register

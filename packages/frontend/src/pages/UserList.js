@@ -157,19 +157,19 @@ const UserList = () => {
     <div className="p-5">
       <h2 className="mb-5 text-2xl font-bold">Users</h2>
 
-      <div className="flex gap-2 mb-5">
+      <div className="mb-5 flex gap-2">
         <input
           type="text"
           placeholder="Search users..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="flex-1 rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
 
         <select
           value={joinedFilter}
           onChange={(e) => setJoinedFilter(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         >
           <option value="">All Users</option>
           <option value="week">Joined this week</option>
@@ -180,7 +180,7 @@ const UserList = () => {
         <select
           value={sortField}
           onChange={(e) => setSortField(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         >
           <option value="name">Sort by Name</option>
           <option value="username">Sort by Username</option>
@@ -189,19 +189,19 @@ const UserList = () => {
 
         <button
           onClick={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          className="p-2 rounded border border-gray-300 bg-white hover:bg-gray-100 transition"
+          className="rounded border border-gray-300 bg-white p-2 transition hover:bg-gray-100"
         >
           {sortDirection === 'asc' ? '↑' : '↓'}
         </button>
       </div>
 
-      {error && <div className="text-red-600 p-2 bg-red-100 rounded mb-5">{error}</div>}
+      {error && <div className="mb-5 rounded bg-red-100 p-2 text-red-600">{error}</div>}
 
       <div className="grid gap-3">
         {filteredUsers.map((user) => (
           <div
             key={user.id}
-            className="border border-gray-300 rounded-lg p-3 bg-white flex justify-between items-center hover:shadow-md transition"
+            className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-3 transition hover:shadow-md"
           >
             <div>
               <h3 className="m-0 mb-1 font-bold">
@@ -209,7 +209,7 @@ const UserList = () => {
               </h3>
               <p className="m-0 text-gray-600">@{user.username}</p>
             </div>
-            <div className="bg-blue-100 px-2 py-1 rounded text-sm">
+            <div className="rounded bg-blue-100 px-2 py-1 text-sm">
               Joined: {new Date(user.created_at).toLocaleDateString()}
             </div>
           </div>

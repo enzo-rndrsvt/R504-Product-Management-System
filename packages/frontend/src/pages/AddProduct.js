@@ -31,10 +31,10 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-5 shadow-md rounded-lg">
-      <h2 className="text-center mb-5 text-2xl font-bold">Add New Product</h2>
+    <div className="mx-auto max-w-sm rounded-lg p-5 shadow-md">
+      <h2 className="mb-5 text-center text-2xl font-bold">Add New Product</h2>
 
-      {error && <div className="text-red-600 mb-2 p-2 bg-red-100 rounded">{error}</div>}
+      {error && <div className="mb-2 rounded bg-red-100 p-2 text-red-600">{error}</div>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -42,7 +42,7 @@ const AddProduct = () => {
           placeholder="Product Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
 
         <input
@@ -50,7 +50,7 @@ const AddProduct = () => {
           placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
 
         <input
@@ -58,19 +58,19 @@ const AddProduct = () => {
           placeholder="Stock"
           value={stock}
           onChange={(e) => setStock(e.target.value)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
+          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
         />
 
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => navigate('/products')}
-            className="flex-1 p-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            className="flex-1 rounded bg-red-500 p-2 text-white transition hover:bg-red-600"
           >
             Cancel
           </button>
 
-          <button type="submit" className="flex-1 p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+          <button type="submit" className="flex-1 rounded bg-green-500 p-2 text-white transition hover:bg-green-600">
             Add Product
           </button>
         </div>
