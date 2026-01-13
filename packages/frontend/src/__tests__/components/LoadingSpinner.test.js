@@ -12,10 +12,6 @@ describe('LoadingSpinner Component', () => {
   it('should have correct styles', () => {
     const { container } = render(<LoadingSpinner />);
     const spinnerWrapper = container.firstChild;
-    expect(spinnerWrapper).toHaveStyle({
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    });
+    expect(spinnerWrapper).toHaveClass('flex', 'justify-center', 'items-center');
   });
 });

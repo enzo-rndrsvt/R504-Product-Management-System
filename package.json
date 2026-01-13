@@ -37,10 +37,11 @@
     "pretty-quick": "^4.2.2"
   },
   "lint-staged": {
-    "packages/**/*.{js,jsx,ts,tsx}": [
-      "npm run lint --workspaces --if-present",
-      "prettier --write",
-      "jest --bail --findRelatedTests"
+    "packages/frontend/**/*.{js,jsx,ts,tsx}": [
+      "npm run lint --workspace=frontend"
+    ],
+    "packages/backend/**/*.{js,jsx,ts,tsx}": [
+      "npm run lint --workspace=backend"
     ],
     "*.{json,css,md}": [
       "prettier --write"

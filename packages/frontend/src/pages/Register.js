@@ -28,48 +28,17 @@ const Register = () => {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '400px',
-        margin: '0 auto',
-        padding: '20px',
-        boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-        borderRadius: '8px'
-      }}
-    >
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Register</h2>
-      {error && (
-        <div
-          style={{
-            color: 'red',
-            marginBottom: '10px',
-            padding: '10px',
-            backgroundColor: '#ffebee',
-            borderRadius: '4px'
-          }}
-        >
-          {error}
-        </div>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px'
-        }}
-      >
+    <div className="max-w-sm mx-auto p-5 shadow-md rounded-lg">
+      <h2 className="text-center mb-5 text-2xl font-bold">Register</h2>
+      {error && <div className="text-red-600 mb-2 p-2 bg-red-100 rounded">{error}</div>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="text"
           name="firstname"
           placeholder="First Name"
           value={formData.firstname}
           onChange={handleChange}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
         <input
           type="text"
@@ -77,11 +46,7 @@ const Register = () => {
           placeholder="Last Name"
           value={formData.lastname}
           onChange={handleChange}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
         <input
           type="text"
@@ -89,11 +54,7 @@ const Register = () => {
           placeholder="Username"
           value={formData.username}
           onChange={handleChange}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
         <input
           type="password"
@@ -101,33 +62,17 @@ const Register = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
-        <button
-          type="submit"
-          style={{
-            padding: '10px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <button type="submit" className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
           Register
         </button>
       </form>
-      <p
-        style={{
-          textAlign: 'center',
-          marginTop: '20px'
-        }}
-      >
-        Already have an account? <Link to="/login">Login</Link>
+      <p className="text-center mt-5">
+        Already have an account?{' '}
+        <Link to="/login" className="text-green-500 hover:underline">
+          Login
+        </Link>
       </p>
     </div>
   );

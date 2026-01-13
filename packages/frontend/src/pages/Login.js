@@ -21,80 +21,33 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '400px',
-        margin: '0 auto',
-        padding: '20px',
-        boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-        borderRadius: '8px'
-      }}
-    >
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Login</h2>
-      {error && (
-        <div
-          style={{
-            color: 'red',
-            marginBottom: '10px',
-            padding: '10px',
-            backgroundColor: '#ffebee',
-            borderRadius: '4px'
-          }}
-        >
-          {error}
-        </div>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px'
-        }}
-      >
+    <div className="max-w-sm mx-auto p-5 shadow-md rounded-lg">
+      <h2 className="text-center mb-5 text-2xl font-bold">Login</h2>
+      {error && <div className="text-red-600 mb-2 p-2 bg-red-100 rounded">{error}</div>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd'
-          }}
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:border-green-500"
         />
-        <button
-          type="submit"
-          style={{
-            padding: '10px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <button type="submit" className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
           Login
         </button>
       </form>
-      <p
-        style={{
-          textAlign: 'center',
-          marginTop: '20px'
-        }}
-      >
-        Don t have an account? <Link to="/register">Register</Link>
+      <p className="text-center mt-5">
+        Don&apos;t have an account?{' '}
+        <Link to="/register" className="text-green-500 hover:underline">
+          Register
+        </Link>
       </p>
     </div>
   );

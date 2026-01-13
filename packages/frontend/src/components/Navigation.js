@@ -22,61 +22,20 @@ const Navigation = ({ onLogout }) => {
   })();
 
   return (
-    <nav
-      style={{
-        backgroundColor: '#333',
-        padding: '10px',
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}
-    >
+    <nav className="bg-gray-800 text-white p-2 px-5 mb-5 flex justify-between items-center">
       <div>
-        <Link
-          to="/users"
-          style={{
-            color: 'white',
-            textDecoration: 'none',
-            marginRight: '20px'
-          }}
-        >
+        <Link to="/users" className="text-white no-underline mr-5 hover:text-gray-300 transition">
           Users
         </Link>
-        <Link
-          to="/products"
-          style={{
-            color: 'white',
-            textDecoration: 'none'
-          }}
-        >
+        <Link to="/products" className="text-white no-underline hover:text-gray-300 transition">
           Products
         </Link>
       </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-        <span
-          style={{
-            color: 'white',
-            marginRight: '20px'
-          }}
-        >
-          {greeting}
-        </span>
+      <div className="flex items-center">
+        <span className="text-white mr-5">{greeting}</span>
         <button
           onClick={handleLogout}
-          style={{
-            backgroundColor: '#f44336',
-            color: 'white',
-            border: 'none',
-            padding: '8px 16px',
-            cursor: 'pointer',
-            borderRadius: '4px'
-          }}
+          className="bg-red-500 text-white border-0 p-2 px-4 rounded hover:bg-red-600 transition"
         >
           Logout
         </button>
