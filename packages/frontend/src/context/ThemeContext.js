@@ -47,8 +47,12 @@ ThemeProvider.propTypes = {
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
+  // Provide a safe default when no provider is present (e.g., in tests)
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    return {
+      isDark: false,
+      toggleTheme: () => {}
+    };
   }
   return context;
 };

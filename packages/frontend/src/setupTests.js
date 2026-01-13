@@ -19,3 +19,21 @@ beforeAll(() => {
 afterAll(() => {
   console.warn = originalWarn;
 });
+
+// Polyfill window.matchMedia for JSDOM environment
+if (!window.matchMedia) {
+  window.matchMedia = function (query) {
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: function () {}, // deprecated
+      removeListener: function () {}, // deprecated
+      addEventListener: function () {},
+      removeEventListener: function () {},
+      dispatchEvent: function () {
+        return false;
+      }
+    };
+  };
+}
