@@ -28,17 +28,17 @@ describe('AddProduct Page', () => {
   it('should render add product form', () => {
     renderAddProduct();
     expect(screen.getByRole('heading', { name: /add new product/i })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/product name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/price/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/stock/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('e.g., Wireless Mouse')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('0')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /add product/i })).toBeInTheDocument();
   });
 
   it('should update form fields on input', () => {
     renderAddProduct();
-    const nameInput = screen.getByPlaceholderText(/product name/i);
-    const priceInput = screen.getByPlaceholderText(/price/i);
-    const stockInput = screen.getByPlaceholderText(/stock/i);
+    const nameInput = screen.getByPlaceholderText('e.g., Wireless Mouse');
+    const priceInput = screen.getByPlaceholderText('0.00');
+    const stockInput = screen.getByPlaceholderText('0');
 
     fireEvent.change(nameInput, { target: { value: 'Test Product' } });
     fireEvent.change(priceInput, { target: { value: '99.99' } });
@@ -64,9 +64,9 @@ describe('AddProduct Page', () => {
     api.createProduct.mockResolvedValue({ id: 1 });
     renderAddProduct();
 
-    const nameInput = screen.getByPlaceholderText(/product name/i);
-    const priceInput = screen.getByPlaceholderText(/price/i);
-    const stockInput = screen.getByPlaceholderText(/stock/i);
+    const nameInput = screen.getByPlaceholderText('e.g., Wireless Mouse');
+    const priceInput = screen.getByPlaceholderText('0.00');
+    const stockInput = screen.getByPlaceholderText('0');
     const submitButton = screen.getByRole('button', { name: /add product/i });
 
     fireEvent.change(nameInput, { target: { value: 'Test Product' } });
@@ -90,9 +90,9 @@ describe('AddProduct Page', () => {
     });
     renderAddProduct();
 
-    const nameInput = screen.getByPlaceholderText(/product name/i);
-    const priceInput = screen.getByPlaceholderText(/price/i);
-    const stockInput = screen.getByPlaceholderText(/stock/i);
+    const nameInput = screen.getByPlaceholderText('e.g., Wireless Mouse');
+    const priceInput = screen.getByPlaceholderText('0.00');
+    const stockInput = screen.getByPlaceholderText('0');
     const submitButton = screen.getByRole('button', { name: /add product/i });
 
     fireEvent.change(nameInput, { target: { value: 'Test Product' } });
@@ -109,9 +109,9 @@ describe('AddProduct Page', () => {
     api.createProduct.mockRejectedValue({});
     renderAddProduct();
 
-    const nameInput = screen.getByPlaceholderText(/product name/i);
-    const priceInput = screen.getByPlaceholderText(/price/i);
-    const stockInput = screen.getByPlaceholderText(/stock/i);
+    const nameInput = screen.getByPlaceholderText('e.g., Wireless Mouse');
+    const priceInput = screen.getByPlaceholderText('0.00');
+    const stockInput = screen.getByPlaceholderText('0');
     const submitButton = screen.getByRole('button', { name: /add product/i });
 
     fireEvent.change(nameInput, { target: { value: 'Test Product' } });

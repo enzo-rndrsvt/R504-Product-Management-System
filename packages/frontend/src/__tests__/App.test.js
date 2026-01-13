@@ -9,7 +9,7 @@ describe('App Component', () => {
 
   it('should render login page when not authenticated', () => {
     render(<App />);
-    expect(screen.getByRole('heading', { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
   });
 
   it('should render navigation when authenticated', () => {

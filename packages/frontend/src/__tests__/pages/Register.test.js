@@ -27,20 +27,20 @@ describe('Register Page', () => {
 
   it('should render registration form', () => {
     renderRegister();
-    expect(screen.getByRole('heading', { name: /register/i })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/first name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/last name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/username/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /create account/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('John')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Doe')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('johndoe')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
   });
 
   it('should update form fields on input', () => {
     renderRegister();
-    const firstnameInput = screen.getByPlaceholderText(/first name/i);
-    const lastnameInput = screen.getByPlaceholderText(/last name/i);
-    const usernameInput = screen.getByPlaceholderText(/username/i);
-    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const firstnameInput = screen.getByPlaceholderText('John');
+    const lastnameInput = screen.getByPlaceholderText('Doe');
+    const usernameInput = screen.getByPlaceholderText('johndoe');
+    const passwordInput = screen.getByPlaceholderText('••••••••');
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
@@ -57,11 +57,11 @@ describe('Register Page', () => {
     api.registerUser.mockResolvedValue({ token: 'mockToken' });
     renderRegister();
 
-    const firstnameInput = screen.getByPlaceholderText(/first name/i);
-    const lastnameInput = screen.getByPlaceholderText(/last name/i);
-    const usernameInput = screen.getByPlaceholderText(/username/i);
-    const passwordInput = screen.getByPlaceholderText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /register/i });
+    const firstnameInput = screen.getByPlaceholderText('John');
+    const lastnameInput = screen.getByPlaceholderText('Doe');
+    const usernameInput = screen.getByPlaceholderText('johndoe');
+    const passwordInput = screen.getByPlaceholderText('••••••••');
+    const submitButton = screen.getByRole('button', { name: /create account/i });
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
@@ -86,11 +86,11 @@ describe('Register Page', () => {
     });
     renderRegister();
 
-    const firstnameInput = screen.getByPlaceholderText(/first name/i);
-    const lastnameInput = screen.getByPlaceholderText(/last name/i);
-    const usernameInput = screen.getByPlaceholderText(/username/i);
-    const passwordInput = screen.getByPlaceholderText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /register/i });
+    const firstnameInput = screen.getByPlaceholderText('John');
+    const lastnameInput = screen.getByPlaceholderText('Doe');
+    const usernameInput = screen.getByPlaceholderText('johndoe');
+    const passwordInput = screen.getByPlaceholderText('••••••••');
+    const submitButton = screen.getByRole('button', { name: /create account/i });
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
@@ -105,7 +105,7 @@ describe('Register Page', () => {
 
   it('should have link to login page', () => {
     renderRegister();
-    const loginLink = screen.getByRole('link', { name: /login/i });
+    const loginLink = screen.getByRole('link', { name: /sign in/i });
     expect(loginLink).toBeInTheDocument();
     expect(loginLink).toHaveAttribute('href', '/login');
   });
@@ -114,7 +114,7 @@ describe('Register Page', () => {
     api.registerUser.mockRejectedValue({});
     renderRegister();
 
-    const submitButton = screen.getByRole('button', { name: /register/i });
+    const submitButton = screen.getByRole('button', { name: /create account/i });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
