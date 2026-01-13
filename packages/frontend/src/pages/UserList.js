@@ -154,69 +154,97 @@ const UserList = () => {
   }, [users, searchTerm, joinedFilter, searchUsers, sortUsers]);
 
   return (
-    <div className="p-5">
-      <h2 className="mb-5 text-2xl font-bold">Users</h2>
-
-      <div className="mb-5 flex gap-2">
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        />
-
-        <select
-          value={joinedFilter}
-          onChange={(e) => setJoinedFilter(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        >
-          <option value="">All Users</option>
-          <option value="week">Joined this week</option>
-          <option value="month">Joined this month</option>
-          <option value="older">Joined earlier</option>
-        </select>
-
-        <select
-          value={sortField}
-          onChange={(e) => setSortField(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        >
-          <option value="name">Sort by Name</option>
-          <option value="username">Sort by Username</option>
-          <option value="joined">Sort by Join Date</option>
-        </select>
-
-        <button
-          onClick={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          className="rounded border border-gray-300 bg-white p-2 transition hover:bg-gray-100"
-        >
-          {sortDirection === 'asc' ? '↑' : '↓'}
-        </button>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-neutral-900">Users</h1>
+        <p className="mt-2 text-neutral-600">View and manage system users</p>
       </div>
 
-      {error && <div className="mb-5 rounded bg-red-100 p-2 text-red-600">{error}</div>}
-
-      <div className="grid gap-3">
-        {filteredUsers.map((user) => (
-          <div
-            key={user.id}
-            className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-3 transition hover:shadow-md"
-          >
-            <div>
-              <h3 className="m-0 mb-1 font-bold">
-                {user.firstname} {user.lastname}
-              </h3>
-              <p className="m-0 text-gray-600">@{user.username}</p>
-            </div>
-            <div className="rounded bg-blue-100 px-2 py-1 text-sm">
-              Joined: {new Date(user.created_at).toLocaleDateString()}
-            </div>
+      <div className="card mb-6 shadow-md">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-2">
+          <div className="flex-1">
+            <label className="form-label mb-2 block">Search</label>
+            <input
+              type="text"
+              placeholder="Search by name, username, or date..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input-field"
+            />
           </div>
-        ))}
+
+          <div className="sm:flex-none">
+            <label className="form-label mb-2 block">Joined</label>
+            <select value={joinedFilter} onChange={(e) => setJoinedFilter(e.target.value)} className="select-field">
+              <option value="">All Users</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="older">Earlier</option>
+            </select>
+          </div>
+
+          <div className="sm:flex-none">
+            <label className="form-label mb-2 block">Sort By</label>
+            <select value={sortField} onChange={(e) => setSortField(e.target.value)} className="select-field">
+              <option value="name">Name</option>
+              <option value="username">Username</option>
+              <option value="joined">Join Date</option>
+            </select>
+          </div>
+
+          <button
+            onClick={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+            className="btn-ghost border border-neutral-300 px-4 py-2.5 font-semibold"
+            title={`Sort ${sortDirection === 'asc' ? 'descending' : 'ascending'}`}
+          >
+            {sortDirection === 'asc' ? '↑' : '↓'}
+          </button>
+        </div>
       </div>
 
-      {filteredUsers.length === 0 && <p className="text-center text-gray-600">No users found matching your criteria</p>}
+      {error && <div className="alert alert-error mb-6">{error}</div>}
+
+      {filteredUsers.length === 0 ? (
+        <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 py-12 text-center">
+          <p className="text-lg text-neutral-600">No users found matching your criteria</p>
+          {searchTerm || joinedFilter ? (
+            <p className="mt-2 text-neutral-500">Try adjusting your filters</p>
+          ) : (
+            <p className="mt-2 text-neutral-500">No users in the system yet</p>
+          )}
+        </div>
+      ) : (
+        <div className="grid gap-3">
+          {filteredUsers.map((user) => (
+            <div key={user.id} className="card transition-all hover:shadow-md">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-primary-100 text-center font-bold text-primary-700">
+                    {user.initials}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-neutral-900">
+                      {user.firstname} {user.lastname}
+                    </h3>
+                    <p className="text-sm text-neutral-600">@{user.username}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:text-right">
+                  <span className="badge badge-primary w-fit">
+                    Joined{' '}
+                    {new Date(user.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

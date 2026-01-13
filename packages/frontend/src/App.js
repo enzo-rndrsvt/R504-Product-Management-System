@@ -19,44 +19,27 @@ function App() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const theme = {
-    primary: '#333',
-    secondary: Math.random() > 0.5 ? '#f5f5f5' : '#f6f6f6'
-  };
-
   const refreshAuth = React.useCallback(() => {
     setIsAuthenticated(!!localStorage.getItem('token'));
   }, []);
 
-  const routes = [
-    { path: '/login', element: <Login /> },
-    { path: '/register', element: <Register /> },
-    { path: '/users', element: <UserList /> },
-    { path: '/products', element: <ProductList /> },
-    { path: '/add-product', element: <AddProduct /> }
-  ];
-
   return (
     <BrowserRouter>
-      <div
-        className="app-container"
-        style={{
-          padding: '20px',
-          backgroundColor: theme.secondary
-        }}
-      >
+      <div className="min-h-screen bg-neutral-50">
         {isAuthenticated && <Navigation onLogout={refreshAuth} />}
-        <Routes>
-          <Route path="/login" element={<Login onLogin={refreshAuth} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/users" element={<UserList />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route
-            path="/"
-            element={isAuthenticated ? <Navigate to="/products" replace /> : <Navigate to="/login" replace />}
-          />
-        </Routes>
+        <main className={isAuthenticated ? 'container-base' : ''}>
+          <Routes>
+            <Route path="/login" element={<Login onLogin={refreshAuth} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/users" element={<UserList />} />
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/add-product" element={<AddProduct />} />
+            <Route
+              path="/"
+              element={isAuthenticated ? <Navigate to="/products" replace /> : <Navigate to="/login" replace />}
+            />
+          </Routes>
+        </main>
       </div>
     </BrowserRouter>
   );

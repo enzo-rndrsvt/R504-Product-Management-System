@@ -1,3 +1,252 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Design System Base Styles */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-neutral-50 text-neutral-900;
+  }
+
+  h1 {
+    @apply text-3xl font-bold text-neutral-900;
+  }
+
+  h2 {
+    @apply text-2xl font-bold text-neutral-900;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-neutral-800;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Design System Components */
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply rounded-lg bg-primary-600 px-4 py-2 font-medium text-white shadow-md transition-all duration-200 hover:bg-primary-700 hover:shadow-lg active:scale-95 disabled:bg-primary-300 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary-lg {
+    @apply btn-primary px-6 py-3 text-lg;
+  }
+
+  .btn-primary-sm {
+    @apply btn-primary px-3 py-1 text-sm;
+  }
+
+  /* Secondary Button (Emerald) */
+  .btn-secondary {
+    @apply rounded-lg bg-secondary-600 px-4 py-2 font-medium text-white shadow-md transition-all duration-200 hover:bg-secondary-700 hover:shadow-lg active:scale-95 disabled:bg-secondary-300 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary-lg {
+    @apply btn-secondary px-6 py-3 text-lg;
+  }
+
+  /* Danger Button */
+  .btn-danger {
+    @apply rounded-lg bg-danger-600 px-4 py-2 font-medium text-white shadow-md transition-all duration-200 hover:bg-danger-700 hover:shadow-lg active:scale-95 disabled:bg-danger-300 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost Button */
+  .btn-ghost {
+    @apply rounded-lg px-4 py-2 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 active:scale-95;
+  }
+
+  /* Input Field */
+  .input-field {
+    @apply w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-neutral-900 shadow-sm transition-all duration-200 placeholder:text-neutral-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none;
+  }
+
+  .input-field:disabled {
+    @apply bg-neutral-100 text-neutral-500 cursor-not-allowed;
+  }
+
+  /* Select Field */
+  .select-field {
+    @apply input-field cursor-pointer appearance-none bg-white pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23525252' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
+
+  /* Textarea */
+  .textarea-field {
+    @apply input-field min-h-24 resize-none;
+  }
+
+  /* Card */
+  .card {
+    @apply rounded-xl bg-white p-6 shadow-md transition-all duration-200 hover:shadow-lg;
+  }
+
+  .card-sm {
+    @apply card p-4;
+  }
+
+  .card-lg {
+    @apply card p-8;
+  }
+
+  /* Alert Box */
+  .alert {
+    @apply rounded-lg border px-4 py-3 text-sm font-medium;
+  }
+
+  .alert-success {
+    @apply border-secondary-200 bg-secondary-50 text-secondary-800;
+  }
+
+  .alert-error {
+    @apply border-danger-200 bg-danger-50 text-danger-800;
+  }
+
+  .alert-warning {
+    @apply border-accent-200 bg-accent-50 text-accent-800;
+  }
+
+  .alert-info {
+    @apply border-primary-200 bg-primary-50 text-primary-800;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .badge-primary {
+    @apply bg-primary-100 text-primary-800;
+  }
+
+  .badge-secondary {
+    @apply bg-secondary-100 text-secondary-800;
+  }
+
+  .badge-danger {
+    @apply bg-danger-100 text-danger-800;
+  }
+
+  .badge-accent {
+    @apply bg-accent-100 text-accent-800;
+  }
+
+  /* Navigation */
+  .navbar {
+    @apply bg-gradient-to-r from-primary-700 to-primary-600 shadow-lg;
+  }
+
+  .nav-link {
+    @apply text-white transition-colors duration-200 hover:text-primary-100;
+  }
+
+  .nav-link-active {
+    @apply border-b-2 border-primary-200 text-white;
+  }
+
+  /* Form Container */
+  .form-group {
+    @apply flex flex-col gap-2;
+  }
+
+  .form-label {
+    @apply text-sm font-semibold text-neutral-700;
+  }
+
+  /* Container */
+  .container-base {
+    @apply mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply inline-block animate-spin rounded-full border-4 border-neutral-200 border-t-primary-600;
+  }
+
+  .spinner-sm {
+    @apply spinner h-8 w-8;
+  }
+
+  .spinner-lg {
+    @apply spinner h-12 w-12;
+  }
+
+  /* Link */
+  .link {
+    @apply text-primary-600 transition-colors duration-200 hover:text-primary-700 hover:underline;
+  }
+
+  .link-muted {
+    @apply text-neutral-600 transition-colors duration-200 hover:text-neutral-800;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-neutral-200;
+  }
+
+  /* Table Styling */
+  .table-base {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .table-header {
+    @apply bg-neutral-100 text-left font-semibold text-neutral-700;
+  }
+
+  .table-row {
+    @apply border-b border-neutral-200 transition-colors duration-200 hover:bg-neutral-50;
+  }
+
+  .table-cell {
+    @apply px-4 py-3;
+  }
+
+  /* Status Indicators */
+  .status-badge {
+    @apply flex items-center gap-2 font-medium;
+  }
+
+  .status-dot {
+    @apply h-2 w-2 rounded-full;
+  }
+
+  .status-available {
+    @apply text-secondary-700;
+  }
+
+  .status-available .status-dot {
+    @apply bg-secondary-500;
+  }
+
+  .status-low {
+    @apply text-accent-700;
+  }
+
+  .status-low .status-dot {
+    @apply bg-accent-500;
+  }
+
+  .status-unavailable {
+    @apply text-danger-700;
+  }
+
+  .status-unavailable .status-dot {
+    @apply bg-danger-500;
+  }
+}

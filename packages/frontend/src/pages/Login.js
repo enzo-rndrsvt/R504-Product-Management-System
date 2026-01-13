@@ -21,34 +21,58 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="mx-auto max-w-sm rounded-lg p-5 shadow-md">
-      <h2 className="mb-5 text-center text-2xl font-bold">Login</h2>
-      {error && <div className="mb-2 rounded bg-red-100 p-2 text-red-600">{error}</div>}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        />
-        <button type="submit" className="rounded bg-green-500 p-2 text-white transition hover:bg-green-600">
-          Login
-        </button>
-      </form>
-      <p className="mt-5 text-center">
-        Don&apos;t have an account?{' '}
-        <Link to="/register" className="text-green-500 hover:underline">
-          Register
-        </Link>
-      </p>
+    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4">
+      <div className="card w-full max-w-sm shadow-lg">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-neutral-900">Welcome Back</h1>
+          <p className="mt-2 text-neutral-600">Sign in to your account</p>
+        </div>
+
+        {error && <div className="alert alert-error mb-4">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          <button type="submit" className="btn-primary w-full py-2.5 font-semibold">
+            Sign In
+          </button>
+        </form>
+
+        <div className="mt-6 border-t border-neutral-200 pt-6 text-center">
+          <p className="text-neutral-600">
+            Don&apos;t have an account?{' '}
+            <Link to="/register" className="link font-semibold">
+              Create one
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -22,23 +22,22 @@ const Navigation = ({ onLogout }) => {
   })();
 
   return (
-    <nav className="mb-5 flex items-center justify-between bg-gray-800 p-2 px-5 text-white">
-      <div>
-        <Link to="/users" className="mr-5 text-white no-underline transition hover:text-gray-300">
-          Users
-        </Link>
-        <Link to="/products" className="text-white no-underline transition hover:text-gray-300">
-          Products
-        </Link>
-      </div>
-      <div className="flex items-center">
-        <span className="mr-5 text-white">{greeting}</span>
-        <button
-          onClick={handleLogout}
-          className="rounded border-0 bg-red-500 p-2 px-4 text-white transition hover:bg-red-600"
-        >
-          Logout
-        </button>
+    <nav className="navbar sticky top-0 z-50 border-b border-primary-500/20">
+      <div className="container-base flex items-center justify-between">
+        <div className="flex gap-8">
+          <Link to="/users" className="nav-link font-medium">
+            Users
+          </Link>
+          <Link to="/products" className="nav-link font-medium">
+            Products
+          </Link>
+        </div>
+        <div className="flex items-center gap-6">
+          <span className="hidden font-medium text-white sm:inline">{greeting}</span>
+          <button onClick={handleLogout} className="btn-danger px-4 py-1.5 text-sm font-medium">
+            Logout
+          </button>
+        </div>
       </div>
     </nav>
   );

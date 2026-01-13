@@ -103,62 +103,103 @@ const ProductList = () => {
   }, [products, searchTerm, priceFilter, stockFilter]);
 
   return (
-    <div className="p-5">
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Products</h2>
+    <div>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-neutral-900">Products</h1>
+          <p className="mt-2 text-neutral-600">Manage your product inventory</p>
+        </div>
         <Link to="/add-product">
-          <button className="rounded bg-green-500 px-5 py-2 text-white transition hover:bg-green-600">
-            Add Product
+          <button className="btn-secondary flex items-center gap-2 px-6 py-2.5 font-semibold">
+            <span>+</span> Add Product
           </button>
         </Link>
       </div>
 
-      <div className="mb-5 flex gap-2">
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        />
+      <div className="card mb-6 shadow-md">
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+          <input
+            type="text"
+            placeholder="Search products by name, price, or stock..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input-field flex-1"
+          />
 
-        <select
-          value={priceFilter}
-          onChange={(e) => setPriceFilter(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        >
-          <option value="">All Prices</option>
-          <option value="low">Low (&lt; $50)</option>
-          <option value="medium">Medium ($50 - $100)</option>
-          <option value="high">High (&gt; $100)</option>
-        </select>
+          <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} className="select-field">
+            <option value="">All Prices</option>
+            <option value="low">Low (&lt; $50)</option>
+            <option value="medium">Medium ($50 - $100)</option>
+            <option value="high">High (&gt; $100)</option>
+          </select>
 
-        <select
-          value={stockFilter}
-          onChange={(e) => setStockFilter(e.target.value)}
-          className="rounded border border-gray-300 p-2 focus:border-green-500 focus:outline-none"
-        >
-          <option value="">All Stock</option>
-          <option value="out">Out of Stock</option>
-          <option value="low">Low Stock</option>
-          <option value="available">Available</option>
-        </select>
+          <select value={stockFilter} onChange={(e) => setStockFilter(e.target.value)} className="select-field">
+            <option value="">All Stock</option>
+            <option value="out">Out of Stock</option>
+            <option value="low">Low Stock</option>
+            <option value="available">Available</option>
+          </select>
+        </div>
       </div>
 
-      {error && <div className="mb-5 rounded bg-red-100 p-2 text-red-600">{error}</div>}
+      {error && <div className="alert alert-error mb-6">{error}</div>}
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="rounded-lg border border-gray-300 bg-white p-3 transition hover:shadow-lg">
-            <h3 className="m-0 mb-2 font-bold">{product.name}</h3>
-            <p className="m-1 text-gray-600">Price: ${product.price}</p>
-            <p className={`m-1 ${product.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>Stock: {product.stock}</p>
-          </div>
-        ))}
-      </div>
+      {filteredProducts.length === 0 ? (
+        <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 py-12 text-center">
+          <p className="text-lg text-neutral-600">No products found matching your criteria</p>
+          {searchTerm || priceFilter || stockFilter ? (
+            <p className="mt-2 text-neutral-500">Try adjusting your filters</p>
+          ) : (
+            <Link to="/add-product">
+              <button className="btn-primary mt-4">Create your first product</button>
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="card group cursor-pointer transition-all hover:shadow-lg">
+              <div className="mb-3 flex items-start justify-between">
+                <h3 className="pr-2 text-lg font-bold text-neutral-900">{product.name}</h3>
+              </div>
 
-      {filteredProducts.length === 0 && (
-        <p className="text-center text-gray-600">No products found matching your criteria</p>
+              <div className="space-y-3 border-t border-neutral-200 pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral-600">Price</span>
+                  <span className="text-lg font-bold text-primary-600">${parseFloat(product.price).toFixed(2)}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral-600">Stock</span>
+                  <div className="status-badge">
+                    {product.stock === 0 ? (
+                      <>
+                        <span className="status-unavailable">Out of Stock</span>
+                        <span className="status-dot" />
+                      </>
+                    ) : product.stock < 10 ? (
+                      <>
+                        <span className="status-low">{product.stock} remaining</span>
+                        <span className="status-dot" />
+                      </>
+                    ) : (
+                      <>
+                        <span className="status-available">{product.stock} in stock</span>
+                        <span className="status-dot" />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {product.stock === 0 && <div className="badge badge-danger mt-3 w-full justify-center">Out of Stock</div>}
+              {product.stock > 0 && product.stock < 10 && (
+                <div className="badge badge-accent mt-3 w-full justify-center">Low Stock</div>
+              )}
+              {product.stock >= 10 && <div className="badge badge-secondary mt-3 w-full justify-center">Available</div>}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
