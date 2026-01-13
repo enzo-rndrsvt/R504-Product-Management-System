@@ -120,7 +120,7 @@ Remember to make Prettier and ESLint work together!
 
 - [x] Implement Tailwind CSS
 - [x] Add ESLint plugin for Tailwind
-- [ ] Create a proper color scheme and design system
+- [x] Create a proper color scheme and design system
 - [ ] Implement responsive design
 - [ ] Add dark mode support
 
