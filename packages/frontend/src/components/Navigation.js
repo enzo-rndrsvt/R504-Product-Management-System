@@ -42,7 +42,7 @@ const Navigation = ({ onLogout }) => {
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-label="Toggle dark mode"
           >
-            <span className="select-none text-lg leading-none text-white">{isDark ? '💡' : '🌙'}</span>
+            {isDark ? '💡' : '🌙'}
           </button>
           <button onClick={handleLogout} className="btn-danger px-4 py-1.5 text-sm font-medium">
             Logout
