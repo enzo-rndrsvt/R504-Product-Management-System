@@ -12,6 +12,8 @@ describe('CategoriesList', () => {
       { id: 1, name: 'Electronics', description: 'Electronic devices' },
       { id: 2, name: 'Clothing', description: 'Apparel and fashion' }
     ]);
+    api.createCategory.mockResolvedValue({});
+    api.deleteCategory.mockResolvedValue({});
   });
 
   it('should render categories list page', async () => {
