@@ -137,7 +137,7 @@ Remember to make Prettier and ESLint work together!
 
 - [x] Add product categories
 - [x] Implement product search
-- [ ] Add product sorting and filtering
+- [x] Add product sorting and filtering
 - [ ] Implement pagination
 - [ ] Add user roles (admin/user)
 
