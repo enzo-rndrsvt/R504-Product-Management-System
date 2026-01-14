@@ -1,124 +1,55 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts, getCategories } from '../services/api';
+import { getProducts } from '../services/api';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [priceFilter, setPriceFilter] = useState('');
-  const [stockFilter, setStockFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        const processedData = data.map((item) => ({
-          ...item,
-          searchableText: `${item.name.toLowerCase()} ${item.price} ${item.stock}`,
-          priceCategory: item.price < 50 ? 'cheap' : item.price < 100 ? 'medium' : 'expensive',
-          stockStatus: item.stock === 0 ? 'out' : item.stock < 10 ? 'low' : 'available'
-        }));
-        setProducts(processedData);
+        setProducts(data);
       } catch (err) {
         setError('Failed to load products');
         console.error(err);
       }
     };
 
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-      }
-    };
-
     fetchProducts();
-    fetchCategories();
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    const searchFiltered = products.filter((product) => {
-      if (!searchTerm) return true;
+  // Debounced search handler
+  useEffect(() => {
+    setIsSearching(true);
 
-      const searchWords = searchTerm.toLowerCase().split(' ');
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
 
-      const searchableWords = product.searchableText.split(' ');
+    debounceTimer.current = setTimeout(() => {
+      setSearchTerm(searchInput);
+      setIsSearching(false);
+    }, 300);
 
-      return searchWords.every((searchWord) =>
-        searchableWords.some((word) => {
-          const normalizedWord = word.toLowerCase().trim();
-          const normalizedSearch = searchWord.toLowerCase().trim();
-
-          // Levenshtein distance calculation for fuzzy matching
-          const distance = Array(normalizedWord.length + 1)
-            .fill(null)
-            .map(() => Array(normalizedSearch.length + 1).fill(null));
-
-          for (let i = 0; i <= normalizedWord.length; i++) {
-            distance[i][0] = i;
-          }
-
-          for (let j = 0; j <= normalizedSearch.length; j++) {
-            distance[0][j] = j;
-          }
-
-          for (let i = 1; i <= normalizedWord.length; i++) {
-            for (let j = 1; j <= normalizedSearch.length; j++) {
-              const cost = normalizedWord[i - 1] === normalizedSearch[j - 1] ? 0 : 1;
-
-              distance[i][j] = Math.min(distance[i - 1][j] + 1, distance[i][j - 1] + 1, distance[i - 1][j - 1] + cost);
-            }
-          }
-
-          // Allow for fuzzy matching with a threshold
-          return distance[normalizedWord.length][normalizedSearch.length] <= 2;
-        })
-      );
-    });
-
-    const priceFiltered = searchFiltered.filter((product) => {
-      if (!priceFilter) return true;
-
-      const price = parseFloat(product.price);
-      switch (priceFilter) {
-        case 'low':
-          return price < 50 && product.priceCategory === 'cheap';
-        case 'medium':
-          return price >= 50 && price < 100 && product.priceCategory === 'medium';
-        case 'high':
-          return price >= 100 && product.priceCategory === 'expensive';
-        default:
-          return true;
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
       }
+    };
+  }, [searchInput]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      if (!searchTerm) return true;
+      return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
-
-    return priceFiltered
-      .filter((product) => {
-        if (!stockFilter) return true;
-
-        const stockNum = parseInt(product.stock);
-
-        switch (stockFilter) {
-          case 'out':
-            return stockNum === 0 && product.stockStatus === 'out';
-          case 'low':
-            return stockNum > 0 && stockNum < 10 && product.stockStatus === 'low';
-          case 'available':
-            return stockNum >= 10 && product.stockStatus === 'available';
-          default:
-            return true;
-        }
-      })
-      .filter((product) => {
-        if (!categoryFilter) return true;
-        return product.category_id && product.category_id.toString() === categoryFilter;
-      });
-  }, [products, searchTerm, priceFilter, stockFilter, categoryFilter]);
+  }, [products, searchTerm]);
 
   return (
     <div>
@@ -135,37 +66,49 @@ const ProductList = () => {
       </div>
 
       <div className="card mb-6 shadow-md">
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
-          <input
-            type="text"
-            placeholder="Search products by name, price, or stock..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-field flex-1"
-          />
-
-          <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="select-field">
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-
-          <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} className="select-field">
-            <option value="">All Prices</option>
-            <option value="low">Low (&lt; $50)</option>
-            <option value="medium">Medium ($50 - $100)</option>
-            <option value="high">High (&gt; $100)</option>
-          </select>
-
-          <select value={stockFilter} onChange={(e) => setStockFilter(e.target.value)} className="select-field">
-            <option value="">All Stock</option>
-            <option value="out">Out of Stock</option>
-            <option value="low">Low Stock</option>
-            <option value="available">Available</option>
-          </select>
+        <div className="mb-4 flex flex-col gap-4">
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+              <svg className="size-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search products by name..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="input-field w-full pl-12 pr-10"
+            />
+            {searchInput && (
+              <button
+                onClick={() => setSearchInput('')}
+                className="absolute inset-y-0 right-0 flex items-center pr-4 text-neutral-400 transition-colors hover:text-neutral-600"
+                aria-label="Clear search"
+              >
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+            {isSearching && (
+              <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                <div className="size-4 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600"></div>
+              </div>
+            )}
+          </div>
+          {searchInput && (
+            <div className="flex items-center gap-2 text-sm text-neutral-600">
+              <span>
+                Found {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -173,9 +116,9 @@ const ProductList = () => {
 
       {filteredProducts.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 py-12 text-center">
-          <p className="text-lg text-neutral-600">No products found matching your criteria</p>
-          {searchTerm || priceFilter || stockFilter || categoryFilter ? (
-            <p className="mt-2 text-neutral-500">Try adjusting your filters</p>
+          <p className="text-lg text-neutral-600">No products found</p>
+          {searchTerm ? (
+            <p className="mt-2 text-neutral-500">Try a different search</p>
           ) : (
             <Link to="/add-product">
               <button className="btn-primary mt-4">Create your first product</button>
