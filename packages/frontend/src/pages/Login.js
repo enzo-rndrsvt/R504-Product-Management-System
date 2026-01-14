@@ -8,16 +8,34 @@ const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Basic validation
+    if (!username.trim()) {
+      setError('Username is required');
+      return;
+    }
+
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       await loginUser(username, password);
       onLogin();
       navigate('/products');
     } catch (err) {
-      setError(err.error || 'An error occurred');
+      setError(err.error || 'Invalid username or password');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -42,8 +60,14 @@ const Login = ({ onLogin }) => {
               type="text"
               placeholder="Enter your username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setError('');
+              }}
               className="input-field"
+              required
+              autoComplete="username"
+              disabled={isLoading}
             />
           </div>
 
@@ -56,13 +80,19 @@ const Login = ({ onLogin }) => {
               type="password"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError('');
+              }}
               className="input-field"
+              required
+              autoComplete="current-password"
+              disabled={isLoading}
             />
           </div>
 
-          <button type="submit" className="btn-primary w-full py-2.5 font-semibold">
-            Sign In
+          <button type="submit" className="btn-primary w-full py-2.5 font-semibold" disabled={isLoading}>
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
