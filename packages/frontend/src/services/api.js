@@ -85,3 +85,21 @@ export const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 };
+
+export const getCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/categories`);
+    return response.data.data;
+  } catch (err) {
+    console.error('Error fetching categories:', err);
+    return [];
+  }
+};
+
+export const createCategory = async (categoryData) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.post(`${API_URL}/categories`, categoryData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};

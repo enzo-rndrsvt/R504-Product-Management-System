@@ -48,7 +48,11 @@ describe('Product Controller', () => {
       // Wait for async operations
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(mockDb.all).toHaveBeenCalledWith('SELECT * FROM products', [], expect.any(Function));
+      expect(mockDb.all).toHaveBeenCalledWith(
+        expect.stringContaining('LEFT JOIN categories'),
+        [],
+        expect.any(Function)
+      );
       expect(res.json).toHaveBeenCalledWith({
         message: 'success',
         data: expect.arrayContaining([
@@ -75,7 +79,8 @@ describe('Product Controller', () => {
       req.body = {
         name: 'New Product',
         price: 150,
-        stock: 20
+        stock: 20,
+        category_id: 1
       };
 
       mockDb.run.mockImplementation((query, params, callback) => {
@@ -86,7 +91,7 @@ describe('Product Controller', () => {
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO products'),
-        ['New Product', 150, 20],
+        ['New Product', 150, 20, 1],
         expect.any(Function)
       );
       expect(res.status).toHaveBeenCalledWith(201);
@@ -94,7 +99,8 @@ describe('Product Controller', () => {
         id: 1,
         name: 'New Product',
         price: 150,
-        stock: 20
+        stock: 20,
+        category_id: 1
       });
     });
 
@@ -128,7 +134,11 @@ describe('Product Controller', () => {
 
       productController.getProduct(req, res);
 
-      expect(mockDb.get).toHaveBeenCalledWith('SELECT * FROM products WHERE id = ?', ['1'], expect.any(Function));
+      expect(mockDb.get).toHaveBeenCalledWith(
+        expect.stringContaining('LEFT JOIN categories'),
+        ['1'],
+        expect.any(Function)
+      );
       expect(res.json).toHaveBeenCalledWith({
         message: 'success',
         data: mockProduct

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const db = require('./db/database');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
 // Routes setup
 app.use('/api/auth', userRoutes);
 app.use('/api', productRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -3,77 +3,95 @@ const db = require('../db/database');
 exports.getAllProducts = (req, res) => {
   const database = db.getDb();
 
-  database.all('SELECT * FROM products', [], async function (error, products) {
-    if (error) {
-      res.status(400).json({ error: error.message });
-      return;
-    }
+  database.all(
+    `SELECT p.*, c.name as category_name, c.description as category_description 
+     FROM products p 
+     LEFT JOIN categories c ON p.category_id = c.id`,
+    [],
+    async function (error, products) {
+      if (error) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
 
-    const productsWithDetails = [];
+      const productsWithDetails = [];
 
-    for (let i = 0; i < products.length; i++) {
-      const product = products[i];
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
 
-      await new Promise((resolve) => {
-        database.get('SELECT COUNT(*) as total FROM products WHERE price <= ?', [product.price], (err, result) => {
-          if (!err) {
-            product.cheaperCount = result.total;
-          }
-          resolve();
+        await new Promise((resolve) => {
+          database.get('SELECT COUNT(*) as total FROM products WHERE price <= ?', [product.price], (err, result) => {
+            if (!err) {
+              product.cheaperCount = result.total;
+            }
+            resolve();
+          });
         });
-      });
 
-      await new Promise((resolve) => {
-        database.get('SELECT AVG(price) as avg FROM products', [], (err, result) => {
-          if (!err) {
-            product.avgPrice = result.avg;
-          }
-          resolve();
+        await new Promise((resolve) => {
+          database.get('SELECT AVG(price) as avg FROM products', [], (err, result) => {
+            if (!err) {
+              product.avgPrice = result.avg;
+            }
+            resolve();
+          });
         });
+
+        productsWithDetails.push(product);
+      }
+
+      res.json({
+        message: 'success',
+        data: productsWithDetails
       });
-
-      productsWithDetails.push(product);
     }
-
-    res.json({
-      message: 'success',
-      data: productsWithDetails
-    });
-  });
+  );
 };
 
 exports.createProduct = (req, res) => {
-  const { name, price, stock } = req.body;
+  const { name, price, stock, category_id } = req.body;
   const database = db.getDb();
 
-  database.run(`INSERT INTO products (name, price, stock) VALUES (?, ?, ?)`, [name, price, stock], function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error creating product' });
+  database.run(
+    `INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)`,
+    [name, price, stock, category_id || null],
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Error creating product' });
+      }
+      res.status(201).json({
+        id: this.lastID,
+        name,
+        price,
+        stock,
+        category_id
+      });
     }
-    res.status(201).json({
-      id: this.lastID,
-      name,
-      price,
-      stock
-    });
-  });
+  );
 };
 
 exports.getProduct = (req, res) => {
   const id = req.params.id;
   const database = db.getDb();
 
-  database.get('SELECT * FROM products WHERE id = ?', [id], (error, result) => {
-    if (error) {
-      res.status(400).json({ error: error.message });
-      return;
+  database.get(
+    `SELECT p.*, c.name as category_name, c.description as category_description 
+     FROM products p 
+     LEFT JOIN categories c ON p.category_id = c.id 
+     WHERE p.id = ?`,
+    [id],
+    (error, result) => {
+      if (error) {
+        res.status(400).json({ error: error.message });
+        return;
+      }
+      res.json({
+        message: 'success',
+        data: result
+      });
     }
-    res.json({
-      message: 'success',
-      data: result
-    });
-  });
+  );
 };
 
 exports.updateStock = (req, res) => {
