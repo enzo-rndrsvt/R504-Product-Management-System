@@ -103,7 +103,7 @@ describe('Login Page', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/An error occurred/)).toBeInTheDocument();
+      expect(screen.getByText(/Invalid username or password/i)).toBeInTheDocument();
     });
   });
 });
