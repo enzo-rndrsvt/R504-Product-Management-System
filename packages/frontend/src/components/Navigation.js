@@ -33,6 +33,9 @@ const Navigation = ({ onLogout }) => {
           <Link to="/products" className="nav-link font-medium">
             Products
           </Link>
+          <Link to="/categories" className="nav-link font-medium">
+            Categories
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden font-medium text-white dark:text-neutral-200 sm:inline">{greeting}</span>
