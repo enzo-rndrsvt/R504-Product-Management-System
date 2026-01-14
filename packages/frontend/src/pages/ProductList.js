@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts } from '../services/api';
+import { getProducts, getCategories } from '../services/api';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [sortBy, setSortBy] = useState('name-asc');
+  const [priceFilter, setPriceFilter] = useState('all');
+  const [stockFilter, setStockFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const debounceTimer = useRef(null);
 
   useEffect(() => {
@@ -21,7 +26,17 @@ const ProductList = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
   // Debounced search handler
@@ -45,11 +60,72 @@ const ProductList = () => {
   }, [searchInput]);
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    // Search filter
+    let filtered = products.filter((product) => {
       if (!searchTerm) return true;
       return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
-  }, [products, searchTerm]);
+
+    // Price filter
+    filtered = filtered.filter((product) => {
+      if (priceFilter === 'all') return true;
+      const price = parseFloat(product.price);
+      switch (priceFilter) {
+        case 'low':
+          return price < 50;
+        case 'medium':
+          return price >= 50 && price < 100;
+        case 'high':
+          return price >= 100;
+        default:
+          return true;
+      }
+    });
+
+    // Stock filter
+    filtered = filtered.filter((product) => {
+      if (stockFilter === 'all') return true;
+      const stock = parseInt(product.stock);
+      switch (stockFilter) {
+        case 'out':
+          return stock === 0;
+        case 'low':
+          return stock > 0 && stock < 10;
+        case 'available':
+          return stock >= 10;
+        default:
+          return true;
+      }
+    });
+
+    // Category filter
+    filtered = filtered.filter((product) => {
+      if (categoryFilter === 'all') return true;
+      return product.category_id && product.category_id.toString() === categoryFilter;
+    });
+
+    // Sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        case 'price-asc':
+          return parseFloat(a.price) - parseFloat(b.price);
+        case 'price-desc':
+          return parseFloat(b.price) - parseFloat(a.price);
+        case 'stock-asc':
+          return parseInt(a.stock) - parseInt(b.stock);
+        case 'stock-desc':
+          return parseInt(b.stock) - parseInt(a.stock);
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [products, searchTerm, priceFilter, stockFilter, categoryFilter, sortBy]);
 
   return (
     <div>
@@ -110,6 +186,69 @@ const ProductList = () => {
             </div>
           )}
         </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <svg className="size-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+              />
+            </svg>
+            <span className="text-sm font-semibold text-neutral-700">Filters</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="select-field">
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+
+            <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} className="select-field">
+              <option value="all">All Prices</option>
+              <option value="low">Low (&lt; $50)</option>
+              <option value="medium">Medium ($50 - $100)</option>
+              <option value="high">High (&gt; $100)</option>
+            </select>
+
+            <select value={stockFilter} onChange={(e) => setStockFilter(e.target.value)} className="select-field">
+              <option value="all">All Stock Levels</option>
+              <option value="out">Out of Stock</option>
+              <option value="low">Low Stock (&lt; 10)</option>
+              <option value="available">Available (≥ 10)</option>
+            </select>
+
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="select-field">
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="price-asc">Price (Low to High)</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="stock-asc">Stock (Low to High)</option>
+              <option value="stock-desc">Stock (High to Low)</option>
+            </select>
+          </div>
+
+          {(categoryFilter !== 'all' || priceFilter !== 'all' || stockFilter !== 'all') && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setCategoryFilter('all');
+                  setPriceFilter('all');
+                  setStockFilter('all');
+                }}
+                className="text-sm text-primary-600 transition-colors hover:text-primary-700"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {error && <div className="alert alert-error mb-6">{error}</div>}
@@ -117,8 +256,8 @@ const ProductList = () => {
       {filteredProducts.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 py-12 text-center">
           <p className="text-lg text-neutral-600">No products found</p>
-          {searchTerm ? (
-            <p className="mt-2 text-neutral-500">Try a different search</p>
+          {searchTerm || categoryFilter !== 'all' || priceFilter !== 'all' || stockFilter !== 'all' ? (
+            <p className="mt-2 text-neutral-500">Try adjusting your search or filters</p>
           ) : (
             <Link to="/add-product">
               <button className="btn-primary mt-4">Create your first product</button>
