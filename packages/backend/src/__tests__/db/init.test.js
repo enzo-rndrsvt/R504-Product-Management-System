@@ -101,18 +101,18 @@ describe('Database Initialization', () => {
     await initDatabase(mockDb);
 
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Laptop', 999.99, 10],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Laptop', 999.99, 10, 2],
       expect.any(Function)
     );
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Smartphone', 499.99, 15],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Smartphone', 499.99, 15, 4],
       expect.any(Function)
     );
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Headphones', 79.99, 20],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Headphones', 79.99, 20, 3],
       expect.any(Function)
     );
   });
