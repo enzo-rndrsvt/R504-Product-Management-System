@@ -81,7 +81,8 @@ describe('Product Routes Integration Tests', () => {
         id: 1,
         name: 'New Product',
         price: 150,
-        stock: 20
+        stock: 20,
+        category_id: null
       });
     });
 

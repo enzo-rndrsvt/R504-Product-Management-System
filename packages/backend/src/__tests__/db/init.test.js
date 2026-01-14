@@ -84,6 +84,26 @@ describe('Database Initialization', () => {
     expect(insertUserCall[1][2]).toBe('admin');
   });
 
+  it('should insert sample categories when categories table is empty', async () => {
+    mockDb.run.mockImplementation((query, paramsOrCallback, callback) => {
+      const cb = typeof paramsOrCallback === 'function' ? paramsOrCallback : callback;
+      if (cb) cb(null);
+    });
+
+    mockDb.get.mockImplementation((query, params, callback) => {
+      if (query.includes('categories')) {
+        callback(null, { count: 0 });
+      } else {
+        callback(null, { count: 1 });
+      }
+    });
+
+    await initDatabase(mockDb);
+
+    const categoryCall = mockDb.run.mock.calls.find((call) => call[0].includes('INSERT INTO categories'));
+    expect(categoryCall).toBeDefined();
+  });
+
   it('should insert sample products when products table is empty', async () => {
     mockDb.run.mockImplementation((query, paramsOrCallback, callback) => {
       const cb = typeof paramsOrCallback === 'function' ? paramsOrCallback : callback;
@@ -101,18 +121,18 @@ describe('Database Initialization', () => {
     await initDatabase(mockDb);
 
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Laptop', 999.99, 10],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Laptop', 999.99, 10, 1],
       expect.any(Function)
     );
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Smartphone', 499.99, 15],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Smartphone', 499.99, 15, 1],
       expect.any(Function)
     );
     expect(mockDb.run).toHaveBeenCalledWith(
-      'INSERT INTO products (name, price, stock) VALUES (?, ?, ?)',
-      ['Headphones', 79.99, 20],
+      'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
+      ['Headphones', 79.99, 20, 1],
       expect.any(Function)
     );
   });

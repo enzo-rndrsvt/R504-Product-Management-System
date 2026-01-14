@@ -27,8 +27,8 @@ describe('Product Controller', () => {
   describe('getAllProducts', () => {
     it('should return all products with details', async () => {
       const mockProducts = [
-        { id: 1, name: 'Product 1', price: 100, stock: 10 },
-        { id: 2, name: 'Product 2', price: 200, stock: 5 }
+        { id: 1, name: 'Product 1', price: 100, stock: 10, category_id: 1, category_name: 'Electronics' },
+        { id: 2, name: 'Product 2', price: 200, stock: 5, category_id: 2, category_name: 'Clothing' }
       ];
 
       mockDb.all.mockImplementation((query, params, callback) => {
@@ -48,7 +48,11 @@ describe('Product Controller', () => {
       // Wait for async operations
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(mockDb.all).toHaveBeenCalledWith('SELECT * FROM products', [], expect.any(Function));
+      expect(mockDb.all).toHaveBeenCalledWith(
+        expect.stringContaining('SELECT p.*, c.name as category_name'),
+        [],
+        expect.any(Function)
+      );
       expect(res.json).toHaveBeenCalledWith({
         message: 'success',
         data: expect.arrayContaining([
@@ -75,7 +79,8 @@ describe('Product Controller', () => {
       req.body = {
         name: 'New Product',
         price: 150,
-        stock: 20
+        stock: 20,
+        category_id: null
       };
 
       mockDb.run.mockImplementation((query, params, callback) => {
@@ -86,7 +91,7 @@ describe('Product Controller', () => {
 
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO products'),
-        ['New Product', 150, 20],
+        expect.arrayContaining(['New Product', 150, 20]),
         expect.any(Function)
       );
       expect(res.status).toHaveBeenCalledWith(201);
@@ -94,7 +99,8 @@ describe('Product Controller', () => {
         id: 1,
         name: 'New Product',
         price: 150,
-        stock: 20
+        stock: 20,
+        category_id: null
       });
     });
 
