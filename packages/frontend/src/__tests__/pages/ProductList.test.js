@@ -9,10 +9,6 @@ jest.mock('../../services/api');
 describe('ProductList Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    api.getCategories.mockResolvedValue([
-      { id: 1, name: 'Electronics' },
-      { id: 2, name: 'Books' }
-    ]);
   });
 
   const renderProductList = () => {

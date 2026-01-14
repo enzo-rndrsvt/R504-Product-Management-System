@@ -22,24 +22,6 @@ const initDatabase = (db) => {
         }
       );
 
-      // Create Categories table
-      db.run(
-        `
-        CREATE TABLE IF NOT EXISTS categories (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL UNIQUE,
-          description TEXT,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `,
-        (err) => {
-          if (err) {
-            console.error('Error creating categories table:', err);
-            reject(err);
-          }
-        }
-      );
-
       // Create Products table
       db.run(
         `
@@ -48,10 +30,8 @@ const initDatabase = (db) => {
           name TEXT NOT NULL,
           price REAL DEFAULT 0,
           stock INTEGER DEFAULT 0,
-          category_id INTEGER,
           created_at DATETIME DEFAULT (datetime('now')),
-          updated_at DATETIME,
-          FOREIGN KEY (category_id) REFERENCES categories(id)
+          updated_at DATETIME
         )
       `,
         (err) => {
@@ -63,30 +43,6 @@ const initDatabase = (db) => {
       );
 
       // Add sample data if tables are empty
-      db.get('SELECT COUNT(*) as count FROM categories', [], (err, result) => {
-        if (err) {
-          console.error('Error checking categories:', err);
-          reject(err);
-          return;
-        }
-
-        if (result.count === 0) {
-          const sampleCategories = [
-            ['Electronics', 'Electronic devices and accessories'],
-            ['Computers', 'Laptops, desktops, and computer peripherals'],
-            ['Audio', 'Headphones, speakers, and audio equipment'],
-            ['Mobile', 'Smartphones and mobile accessories'],
-            ['Gaming', 'Gaming consoles and accessories']
-          ];
-
-          sampleCategories.forEach(([name, description]) => {
-            db.run('INSERT INTO categories (name, description) VALUES (?, ?)', [name, description], (err) => {
-              if (err) console.error('Error inserting category:', name, err);
-            });
-          });
-        }
-      });
-
       db.get('SELECT COUNT(*) as count FROM users', [], (err, result) => {
         if (err) {
           console.error('Error checking users:', err);
@@ -123,19 +79,15 @@ const initDatabase = (db) => {
 
         if (result.count === 0) {
           const sampleProducts = [
-            ['Laptop', 999.99, 10, 2],
-            ['Smartphone', 499.99, 15, 4],
-            ['Headphones', 79.99, 20, 3]
+            ['Laptop', 999.99, 10],
+            ['Smartphone', 499.99, 15],
+            ['Headphones', 79.99, 20]
           ];
 
-          sampleProducts.forEach(([name, price, stock, category_id]) => {
-            db.run(
-              'INSERT INTO products (name, price, stock, category_id) VALUES (?, ?, ?, ?)',
-              [name, price, stock, category_id],
-              (err) => {
-                if (err) console.error('Error inserting product:', name, err);
-              }
-            );
+          sampleProducts.forEach(([name, price, stock]) => {
+            db.run('INSERT INTO products (name, price, stock) VALUES (?, ?, ?)', [name, price, stock], (err) => {
+              if (err) console.error('Error inserting product:', name, err);
+            });
           });
         }
       });
