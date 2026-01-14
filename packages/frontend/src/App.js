@@ -5,7 +5,6 @@ import Register from './pages/Register';
 import UserList from './pages/UserList';
 import ProductList from './pages/ProductList';
 import AddProduct from './pages/AddProduct';
-import CategoriesList from './pages/CategoriesList';
 import Navigation from './components/Navigation';
 import { ThemeProvider } from './context/ThemeContext';
 
@@ -37,7 +36,6 @@ function App() {
               <Route path="/users" element={<UserList />} />
               <Route path="/products" element={<ProductList />} />
               <Route path="/add-product" element={<AddProduct />} />
-              <Route path="/categories" element={<CategoriesList />} />
               <Route
                 path="/"
                 element={isAuthenticated ? <Navigate to="/products" replace /> : <Navigate to="/login" replace />}

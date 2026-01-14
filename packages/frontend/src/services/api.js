@@ -103,11 +103,3 @@ export const createCategory = async (categoryData) => {
   });
   return response.data;
 };
-
-export const deleteCategory = async (id) => {
-  const token = localStorage.getItem('token');
-  const response = await axios.delete(`${API_URL}/categories/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
