@@ -28,45 +28,50 @@ describe('Register Page', () => {
   it('should render registration form', () => {
     renderRegister();
     expect(screen.getByRole('heading', { name: /create account/i })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('John')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Doe')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('johndoe')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/John/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Doe/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/min\. 3 characters/i)).toBeInTheDocument();
+    expect(screen.getAllByPlaceholderText('••••••••')).toHaveLength(2);
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
   });
 
   it('should update form fields on input', () => {
     renderRegister();
-    const firstnameInput = screen.getByPlaceholderText('John');
-    const lastnameInput = screen.getByPlaceholderText('Doe');
-    const usernameInput = screen.getByPlaceholderText('johndoe');
-    const passwordInput = screen.getByPlaceholderText('••••••••');
+    const firstnameInput = screen.getByPlaceholderText(/John/);
+    const lastnameInput = screen.getByPlaceholderText(/Doe/);
+    const usernameInput = screen.getByPlaceholderText(/min\. 3 characters/i);
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInput = passwordInputs[0];
+    const confirmPasswordInput = passwordInputs[1];
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
     fireEvent.change(usernameInput, { target: { value: 'johndoe' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(passwordInput, { target: { value: 'Password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
 
     expect(firstnameInput.value).toBe('John');
     expect(lastnameInput.value).toBe('Doe');
     expect(usernameInput.value).toBe('johndoe');
-    expect(passwordInput.value).toBe('password123');
+    expect(passwordInput.value).toBe('Password123');
+    expect(confirmPasswordInput.value).toBe('Password123');
   });
 
-  it('should call registerUser on form submit', async () => {
+  it('should call registerUser on form submit with valid data', async () => {
     api.registerUser.mockResolvedValue({ token: 'mockToken' });
     renderRegister();
 
-    const firstnameInput = screen.getByPlaceholderText('John');
-    const lastnameInput = screen.getByPlaceholderText('Doe');
-    const usernameInput = screen.getByPlaceholderText('johndoe');
-    const passwordInput = screen.getByPlaceholderText('••••••••');
+    const firstnameInput = screen.getByPlaceholderText(/John/);
+    const lastnameInput = screen.getByPlaceholderText(/Doe/);
+    const usernameInput = screen.getByPlaceholderText(/min\. 3 characters/i);
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
     fireEvent.change(usernameInput, { target: { value: 'johndoe' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(passwordInputs[0], { target: { value: 'Password123' } });
+    fireEvent.change(passwordInputs[1], { target: { value: 'Password123' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -74,7 +79,7 @@ describe('Register Page', () => {
         firstname: 'John',
         lastname: 'Doe',
         username: 'johndoe',
-        password: 'password123'
+        password: 'Password123'
       });
       expect(mockNavigate).toHaveBeenCalledWith('/products');
     });
@@ -86,16 +91,17 @@ describe('Register Page', () => {
     });
     renderRegister();
 
-    const firstnameInput = screen.getByPlaceholderText('John');
-    const lastnameInput = screen.getByPlaceholderText('Doe');
-    const usernameInput = screen.getByPlaceholderText('johndoe');
-    const passwordInput = screen.getByPlaceholderText('••••••••');
+    const firstnameInput = screen.getByPlaceholderText(/John/);
+    const lastnameInput = screen.getByPlaceholderText(/Doe/);
+    const usernameInput = screen.getByPlaceholderText(/min\. 3 characters/i);
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
     fireEvent.change(firstnameInput, { target: { value: 'John' } });
     fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
     fireEvent.change(usernameInput, { target: { value: 'existinguser' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(passwordInputs[0], { target: { value: 'Password123' } });
+    fireEvent.change(passwordInputs[1], { target: { value: 'Password123' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -114,11 +120,67 @@ describe('Register Page', () => {
     api.registerUser.mockRejectedValue({});
     renderRegister();
 
+    const firstnameInput = screen.getByPlaceholderText(/John/);
+    const lastnameInput = screen.getByPlaceholderText(/Doe/);
+    const usernameInput = screen.getByPlaceholderText(/min\. 3 characters/i);
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const submitButton = screen.getByRole('button', { name: /create account/i });
+
+    fireEvent.change(firstnameInput, { target: { value: 'John' } });
+    fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
+    fireEvent.change(usernameInput, { target: { value: 'johndoe' } });
+    fireEvent.change(passwordInputs[0], { target: { value: 'Password123' } });
+    fireEvent.change(passwordInputs[1], { target: { value: 'Password123' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText('Registration failed')).toBeInTheDocument();
+    });
+  });
+
+  it('should show password requirements when password field is focused', () => {
+    renderRegister();
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInput = passwordInputs[0];
+
+    fireEvent.focus(passwordInput);
+    expect(screen.getByText(/Password must contain:/i)).toBeInTheDocument();
+  });
+
+  it('should validate password confirmation matches', async () => {
+    renderRegister();
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+
+    fireEvent.change(passwordInputs[0], { target: { value: 'Password123' } });
+    fireEvent.change(passwordInputs[1], { target: { value: 'Password123' } });
+    fireEvent.blur(passwordInputs[1]);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Passwords match/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should show error when passwords do not match', async () => {
+    renderRegister();
+    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const submitButton = screen.getByRole('button', { name: /create account/i });
+
+    const firstnameInput = screen.getByPlaceholderText(/John/);
+    const lastnameInput = screen.getByPlaceholderText(/Doe/);
+    const usernameInput = screen.getByPlaceholderText(/min\. 3 characters/i);
+
+    fireEvent.change(firstnameInput, { target: { value: 'John' } });
+    fireEvent.change(lastnameInput, { target: { value: 'Doe' } });
+    fireEvent.change(usernameInput, { target: { value: 'johndoe' } });
+    fireEvent.change(passwordInputs[0], { target: { value: 'Password123' } });
+    fireEvent.blur(passwordInputs[0]);
+    fireEvent.change(passwordInputs[1], { target: { value: 'DifferentPass456' } });
+    fireEvent.blur(passwordInputs[1]);
+    // Submit to trigger validation
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Passwords do not match/i)).toBeInTheDocument();
     });
   });
 });

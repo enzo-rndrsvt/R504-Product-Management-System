@@ -2,42 +2,133 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db/database');
 
+const validatePassword = (password) => {
+  const errors = [];
+
+  if (!password) {
+    errors.push('Password is required');
+    return { isValid: false, errors };
+  }
+
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long');
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+const validateUserData = (userData) => {
+  const errors = [];
+
+  if (!userData.username || userData.username.trim().length === 0) {
+    errors.push('Username is required');
+  } else if (userData.username.length < 3) {
+    errors.push('Username must be at least 3 characters long');
+  }
+
+  if (!userData.firstname || userData.firstname.trim().length === 0) {
+    errors.push('First name is required');
+  }
+
+  if (!userData.lastname || userData.lastname.trim().length === 0) {
+    errors.push('Last name is required');
+  }
+
+  const passwordValidation = validatePassword(userData.password);
+  if (!passwordValidation.isValid) {
+    errors.push(...passwordValidation.errors);
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
 exports.registerUser = (req, res) => {
   const { username, password, firstname, lastname } = req.body;
 
-  const hashedPassword = bcrypt.hashSync(password, 8);
+  // Validate input
+  const validation = validateUserData({ username, password, firstname, lastname });
+
+  if (!validation.isValid) {
+    return res.status(400).json({
+      error: validation.errors.join(', '),
+      errors: validation.errors
+    });
+  }
 
   const database = db.getDb();
 
-  database.run(
-    `INSERT INTO users (username, password, firstname, lastname) VALUES (?, ?, ?, ?)`,
-    [username, hashedPassword, firstname, lastname],
-    function (err) {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Error creating user' });
-      }
-
-      const token = jwt.sign({ id: this.lastID }, 'your-super-secret-key-that-should-not-be-hardcoded', {
-        expiresIn: 86400
-      });
-
-      res.status(201).json({ auth: true, token });
+  // Check if username already exists
+  database.get('SELECT id FROM users WHERE username = ?', [username], (err, existingUser) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error checking username availability' });
     }
-  );
+
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    database.run(
+      `INSERT INTO users (username, password, firstname, lastname) VALUES (?, ?, ?, ?)`,
+      [username.trim(), hashedPassword, firstname.trim(), lastname.trim()],
+      function (err) {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Error creating user' });
+        }
+
+        const token = jwt.sign({ id: this.lastID }, 'your-super-secret-key-that-should-not-be-hardcoded', {
+          expiresIn: 86400
+        });
+
+        res.status(201).json({ auth: true, token });
+      }
+    );
+  });
 };
 
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
 
+  // Validate input
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
   const database = db.getDb();
 
   database.get(`SELECT * FROM users WHERE username = ?`, [username], (err, user) => {
-    if (err) return res.status(500).json({ error: 'Error on the server.' });
-    if (!user) return res.status(404).json({ error: 'No user found.' });
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error on the server.' });
+    }
+
+    // Don't reveal if user exists or not for security
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
 
     const passwordIsValid = bcrypt.compareSync(password, user.password);
-    if (!passwordIsValid) return res.status(401).json({ auth: false, token: null });
+    if (!passwordIsValid) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
 
     const token = jwt.sign({ id: user.id }, 'your-super-secret-key-that-should-not-be-hardcoded', { expiresIn: 86400 });
 

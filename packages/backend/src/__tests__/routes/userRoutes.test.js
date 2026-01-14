@@ -30,9 +30,14 @@ describe('User Routes Integration Tests', () => {
   });
 
   describe('POST /api/auth/register', () => {
-    it('should register a new user', async () => {
+    it('should register a new user with valid data', async () => {
       bcrypt.hashSync.mockReturnValue('hashedPassword');
       jwt.sign.mockReturnValue('mockToken');
+
+      // Mock username check (no existing user)
+      mockDb.get.mockImplementation((query, params, callback) => {
+        callback(null, null);
+      });
 
       mockDb.run.mockImplementation((query, params, callback) => {
         callback.call({ lastID: 1 }, null);
@@ -40,7 +45,7 @@ describe('User Routes Integration Tests', () => {
 
       const response = await request(app).post('/api/auth/register').send({
         username: 'testuser',
-        password: 'password123',
+        password: 'Password123',
         firstname: 'Test',
         lastname: 'User'
       });
@@ -49,8 +54,26 @@ describe('User Routes Integration Tests', () => {
       expect(response.body).toEqual({ auth: true, token: 'mockToken' });
     });
 
+    it('should reject registration with invalid password', async () => {
+      const response = await request(app).post('/api/auth/register').send({
+        username: 'testuser',
+        password: 'weak',
+        firstname: 'Test',
+        lastname: 'User'
+      });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('errors');
+    });
+
     it('should return 500 on database error', async () => {
       bcrypt.hashSync.mockReturnValue('hashedPassword');
+
+      // Mock no existing user
+      mockDb.get.mockImplementation((query, params, callback) => {
+        callback(null, null);
+      });
 
       mockDb.run.mockImplementation((query, params, callback) => {
         callback.call({ lastID: 1 }, new Error('Database error'));
@@ -58,7 +81,7 @@ describe('User Routes Integration Tests', () => {
 
       const response = await request(app).post('/api/auth/register').send({
         username: 'testuser',
-        password: 'password123',
+        password: 'Password123',
         firstname: 'Test',
         lastname: 'User'
       });
@@ -103,7 +126,7 @@ describe('User Routes Integration Tests', () => {
       });
     });
 
-    it('should return 404 for non-existent user', async () => {
+    it('should return 401 for non-existent user', async () => {
       mockDb.get.mockImplementation((query, params, callback) => {
         callback(null, null);
       });
@@ -113,8 +136,8 @@ describe('User Routes Integration Tests', () => {
         password: 'password123'
       });
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ error: 'No user found.' });
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual({ error: 'Invalid username or password' });
     });
 
     it('should return 401 for invalid password', async () => {
@@ -136,7 +159,7 @@ describe('User Routes Integration Tests', () => {
       });
 
       expect(response.status).toBe(401);
-      expect(response.body).toEqual({ auth: false, token: null });
+      expect(response.body).toEqual({ error: 'Invalid username or password' });
     });
   });
 

@@ -32,7 +32,7 @@ describe('User Controller', () => {
     it('should register a new user successfully', () => {
       req.body = {
         username: 'testuser',
-        password: 'password123',
+        password: 'Password123',
         firstname: 'Test',
         lastname: 'User'
       };
@@ -40,13 +40,18 @@ describe('User Controller', () => {
       bcrypt.hashSync.mockReturnValue('hashedPassword');
       jwt.sign.mockReturnValue('mockToken');
 
+      // Mock the username check (no existing user)
+      mockDb.get.mockImplementation((query, params, callback) => {
+        callback(null, null);
+      });
+
       mockDb.run.mockImplementation((query, params, callback) => {
         callback.call({ lastID: 1 }, null);
       });
 
       userController.registerUser(req, res);
 
-      expect(bcrypt.hashSync).toHaveBeenCalledWith('password123', 8);
+      expect(bcrypt.hashSync).toHaveBeenCalledWith('Password123', 10);
       expect(mockDb.run).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO users'),
         ['testuser', 'hashedPassword', 'Test', 'User'],
@@ -57,7 +62,26 @@ describe('User Controller', () => {
       expect(res.json).toHaveBeenCalledWith({ auth: true, token: 'mockToken' });
     });
 
-    it('should handle registration error', () => {
+    it('should reject registration with invalid password (too short)', () => {
+      req.body = {
+        username: 'testuser',
+        password: 'Pass1',
+        firstname: 'Test',
+        lastname: 'User'
+      };
+
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('at least 8 characters'),
+          errors: expect.any(Array)
+        })
+      );
+    });
+
+    it('should reject registration with password missing uppercase', () => {
       req.body = {
         username: 'testuser',
         password: 'password123',
@@ -65,7 +89,104 @@ describe('User Controller', () => {
         lastname: 'User'
       };
 
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('uppercase'),
+          errors: expect.any(Array)
+        })
+      );
+    });
+
+    it('should reject registration with password missing number', () => {
+      req.body = {
+        username: 'testuser',
+        password: 'Password',
+        firstname: 'Test',
+        lastname: 'User'
+      };
+
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('number'),
+          errors: expect.any(Array)
+        })
+      );
+    });
+
+    it('should reject registration with username too short', () => {
+      req.body = {
+        username: 'ab',
+        password: 'Password123',
+        firstname: 'Test',
+        lastname: 'User'
+      };
+
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('at least 3 characters'),
+          errors: expect.any(Array)
+        })
+      );
+    });
+
+    it('should reject registration with missing fields', () => {
+      req.body = {
+        username: 'testuser',
+        password: 'Password123'
+      };
+
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          errors: expect.arrayContaining([expect.stringContaining('First name'), expect.stringContaining('Last name')])
+        })
+      );
+    });
+
+    it('should reject registration with existing username', () => {
+      req.body = {
+        username: 'existinguser',
+        password: 'Password123',
+        firstname: 'Test',
+        lastname: 'User'
+      };
+
+      // Mock existing user
+      mockDb.get.mockImplementation((query, params, callback) => {
+        callback(null, { id: 1, username: 'existinguser' });
+      });
+
+      userController.registerUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(409);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Username already exists' });
+    });
+
+    it('should handle registration database error', () => {
+      req.body = {
+        username: 'testuser',
+        password: 'Password123',
+        firstname: 'Test',
+        lastname: 'User'
+      };
+
       bcrypt.hashSync.mockReturnValue('hashedPassword');
+
+      // Mock no existing user
+      mockDb.get.mockImplementation((query, params, callback) => {
+        callback(null, null);
+      });
 
       mockDb.run.mockImplementation((query, params, callback) => {
         callback.call({ lastID: 1 }, new Error('Database error'));
@@ -129,8 +250,8 @@ describe('User Controller', () => {
 
       userController.loginUser(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'No user found.' });
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Invalid username or password' });
     });
 
     it('should handle invalid password', () => {
@@ -156,7 +277,29 @@ describe('User Controller', () => {
       userController.loginUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ auth: false, token: null });
+      expect(res.json).toHaveBeenCalledWith({ error: 'Invalid username or password' });
+    });
+
+    it('should reject login with missing username', () => {
+      req.body = {
+        password: 'password123'
+      };
+
+      userController.loginUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Username and password are required' });
+    });
+
+    it('should reject login with missing password', () => {
+      req.body = {
+        username: 'testuser'
+      };
+
+      userController.loginUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Username and password are required' });
     });
 
     it('should handle database error', () => {
