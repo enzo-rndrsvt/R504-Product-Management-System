@@ -135,7 +135,7 @@ Remember to make Prettier and ESLint work together!
 
 ### 3. Additional Features
 
-- [ ] Add product categories
+- [x] Add product categories
 - [ ] Implement product search
 - [ ] Add product sorting and filtering
 - [ ] Implement pagination
