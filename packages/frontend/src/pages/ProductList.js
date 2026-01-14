@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts } from '../services/api';
+import { getProducts, getCategories } from '../services/api';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
   const [stockFilter, setStockFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,7 +27,18 @@ const ProductList = () => {
         console.error(err);
       }
     };
+
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -84,23 +97,28 @@ const ProductList = () => {
       }
     });
 
-    return priceFiltered.filter((product) => {
-      if (!stockFilter) return true;
+    return priceFiltered
+      .filter((product) => {
+        if (!stockFilter) return true;
 
-      const stockNum = parseInt(product.stock);
+        const stockNum = parseInt(product.stock);
 
-      switch (stockFilter) {
-        case 'out':
-          return stockNum === 0 && product.stockStatus === 'out';
-        case 'low':
-          return stockNum > 0 && stockNum < 10 && product.stockStatus === 'low';
-        case 'available':
-          return stockNum >= 10 && product.stockStatus === 'available';
-        default:
-          return true;
-      }
-    });
-  }, [products, searchTerm, priceFilter, stockFilter]);
+        switch (stockFilter) {
+          case 'out':
+            return stockNum === 0 && product.stockStatus === 'out';
+          case 'low':
+            return stockNum > 0 && stockNum < 10 && product.stockStatus === 'low';
+          case 'available':
+            return stockNum >= 10 && product.stockStatus === 'available';
+          default:
+            return true;
+        }
+      })
+      .filter((product) => {
+        if (!categoryFilter) return true;
+        return product.category_id && product.category_id.toString() === categoryFilter;
+      });
+  }, [products, searchTerm, priceFilter, stockFilter, categoryFilter]);
 
   return (
     <div>
@@ -126,6 +144,15 @@ const ProductList = () => {
             className="input-field flex-1"
           />
 
+          <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="select-field">
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
           <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} className="select-field">
             <option value="">All Prices</option>
             <option value="low">Low (&lt; $50)</option>
@@ -147,7 +174,7 @@ const ProductList = () => {
       {filteredProducts.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 py-12 text-center">
           <p className="text-lg text-neutral-600">No products found matching your criteria</p>
-          {searchTerm || priceFilter || stockFilter ? (
+          {searchTerm || priceFilter || stockFilter || categoryFilter ? (
             <p className="mt-2 text-neutral-500">Try adjusting your filters</p>
           ) : (
             <Link to="/add-product">
@@ -160,7 +187,14 @@ const ProductList = () => {
           {filteredProducts.map((product) => (
             <div key={product.id} className="card group cursor-pointer transition-all hover:shadow-lg">
               <div className="mb-3 flex items-start justify-between">
-                <h3 className="pr-2 text-lg font-bold text-neutral-900">{product.name}</h3>
+                <div>
+                  <h3 className="pr-2 text-lg font-bold text-neutral-900">{product.name}</h3>
+                  {product.category_name && (
+                    <span className="mt-1 inline-block rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
+                      {product.category_name}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-3 border-t border-neutral-200 pt-3">

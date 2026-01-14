@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createProduct } from '../services/api';
+import { createProduct, getCategories } from '../services/api';
 
 const AddProduct = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +35,8 @@ const AddProduct = () => {
       await createProduct({
         name,
         price: price,
-        stock: stock
+        stock: stock,
+        category_id: categoryId || null
       });
       navigate('/products');
     } catch (err) {
@@ -53,6 +68,25 @@ const AddProduct = () => {
               onChange={(e) => setName(e.target.value)}
               className="input-field"
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="category" className="form-label">
+              Category
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="input-field"
+            >
+              <option value="">Select a category (optional)</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

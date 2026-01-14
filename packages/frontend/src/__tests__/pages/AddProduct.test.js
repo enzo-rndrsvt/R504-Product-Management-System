@@ -15,6 +15,7 @@ jest.mock('react-router-dom', () => ({
 describe('AddProduct Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    api.getCategories.mockResolvedValue([]);
   });
 
   const renderAddProduct = () => {
@@ -78,7 +79,8 @@ describe('AddProduct Page', () => {
       expect(api.createProduct).toHaveBeenCalledWith({
         name: 'Test Product',
         price: '99.99',
-        stock: '10'
+        stock: '10',
+        category_id: null
       });
       expect(mockNavigate).toHaveBeenCalledWith('/products');
     });
