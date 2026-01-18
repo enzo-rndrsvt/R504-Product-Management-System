@@ -4,17 +4,20 @@ const bodyParser = require('body-parser');
 const db = require('./db/database');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
 
 const requestLog = [];
 const analyticsCache = [];
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -46,6 +49,7 @@ app.use((req, res, next) => {
 // Routes setup
 app.use('/api/auth', userRoutes);
 app.use('/api', productRoutes);
+app.use('/api', categoryRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -86,11 +90,10 @@ const startServer = async () => {
       console.info('SIGTERM signal received.');
       server.close(() => {
         db.closeConnection()
-            .then(() => process.exit(0))
-            .catch(() => process.exit(1));
+          .then(() => process.exit(0))
+          .catch(() => process.exit(1));
       });
     });
-
   } catch (err) {
     console.error('Failed to start server:', err);
     process.exit(1);

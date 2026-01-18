@@ -24,9 +24,11 @@ export const registerUser = async (userData) => {
 
 export async function getUsers() {
   const token = localStorage.getItem('token');
-  return axios.get(`${API_URL}/auth/users`, {
-    headers: { Authorization: `Bearer ${token}` }
-  }).then(response => response.data);
+  return axios
+    .get(`${API_URL}/auth/users`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => response.data);
 }
 
 export const getProducts = async () => {
@@ -82,4 +84,30 @@ export const createProduct = async (productData) => {
 export const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+};
+
+export const getCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/categories`);
+    return response.data.data;
+  } catch (err) {
+    console.error('Error fetching categories:', err);
+    return [];
+  }
+};
+
+export const createCategory = async (categoryData) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.post(`${API_URL}/categories`, categoryData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const deleteCategory = async (id) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.delete(`${API_URL}/categories/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
 };

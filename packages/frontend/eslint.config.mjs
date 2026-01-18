@@ -1,0 +1,50 @@
+import globals from 'globals';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import perfectionist from 'eslint-plugin-perfectionist';
+import prettierPlugin from 'eslint-plugin-prettier';
+import tailwindcss from 'eslint-plugin-tailwindcss';
+import { defineConfig } from 'eslint/config';
+
+const sanitizeGlobals = (g) => Object.fromEntries(Object.entries(g).map(([k, v]) => [k.trim(), v]));
+
+export default defineConfig([
+  react.configs.flat.recommended,
+  {
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'jsx-a11y': jsxA11y,
+      perfectionist,
+      prettier: prettierPlugin,
+      tailwindcss
+    },
+    files: [
+      'src/**/*.{js,jsx}'
+    ],
+    ignores: [
+      'build/**',
+      'coverage/**',
+      'public/**',
+      'node_modules/**'
+    ],
+    languageOptions: {
+      globals: {
+        ...sanitizeGlobals(globals.node),
+        ...sanitizeGlobals(globals.browser)
+      }
+    },
+    settings: {
+      react: { version: 'detect' }
+    },
+    rules: {
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      'tailwindcss/classnames-order': 'warn',
+      'tailwindcss/enforces-negative-arbitrary-values': 'warn',
+      'tailwindcss/enforces-shorthand': 'warn',
+      'tailwindcss/migration-from-tailwind-2': 'warn',
+      'tailwindcss/no-custom-classname': 'warn'
+    }
+  }
+]);

@@ -6,6 +6,7 @@ import moment from 'moment';
 import 'moment/locale/fr';
 import 'moment/locale/es';
 import 'moment/locale/de';
+import './styles/index.css';
 
 window._ = _;
 window.moment = moment;
@@ -13,12 +14,12 @@ window.moment = moment;
 console.log('Lodash version:', _.VERSION);
 console.log('Moment loaded with locales:', moment.locales());
 
-window.onerror = function(message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
   console.error('Global error:', { message, source, lineno, colno, error });
   return false;
 };
 
-window.onunhandledrejection = function(event) {
+window.onunhandledrejection = function (event) {
   console.error('Unhandled promise rejection:', event.reason);
 };
 
@@ -41,9 +42,7 @@ const renderApp = () => {
   try {
     const appRoot = ReactDOM.createRoot(root);
 
-    appRoot.render(
-        <App />
-    );
+    appRoot.render(<App />);
 
     if (isDev) {
       const endTime = performance.now();
@@ -66,19 +65,15 @@ if (module.hot) {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(registration => {
-          console.log('SW registered:', registration);
-        })
-        .catch(error => {
-          console.error('SW registration failed:', error);
-        });
+      .register('/service-worker.js')
+      .then((registration) => {
+        console.log('SW registered:', registration);
+      })
+      .catch((error) => {
+        console.error('SW registration failed:', error);
+      });
   });
 }
-
-window.addEventListener('unload', () => {
-  console.log('App cleanup');
-});
 
 window.addEventListener('error', (event) => {
   console.error('Runtime error:', event.error);
