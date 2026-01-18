@@ -13,6 +13,8 @@ const ProductList = () => {
   const [priceFilter, setPriceFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const debounceTimer = useRef(null);
 
   useEffect(() => {
@@ -58,6 +60,11 @@ const ProductList = () => {
       }
     };
   }, [searchInput]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, priceFilter, stockFilter, categoryFilter, sortBy]);
 
   const filteredProducts = useMemo(() => {
     // Search filter
@@ -127,6 +134,46 @@ const ProductList = () => {
     return sorted;
   }, [products, searchTerm, priceFilter, stockFilter, categoryFilter, sortBy]);
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
@@ -185,6 +232,30 @@ const ProductList = () => {
               </span>
             </div>
           )}
+        </div>
+
+        <div className="flex items-center justify-between border-t border-neutral-200 pt-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-neutral-600">Show</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="select-field py-1 text-sm"
+            >
+              <option value={8}>8</option>
+              <option value={12}>12</option>
+              <option value={24}>24</option>
+              <option value={48}>48</option>
+            </select>
+            <span className="text-sm text-neutral-600">per page</span>
+          </div>
+          <div className="text-sm text-neutral-600">
+            Showing {filteredProducts.length > 0 ? startIndex + 1 : 0} to {Math.min(endIndex, filteredProducts.length)}{' '}
+            of {filteredProducts.length} products
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -265,57 +336,111 @@ const ProductList = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="card group cursor-pointer transition-all hover:shadow-lg">
-              <div className="mb-3 flex items-start justify-between">
-                <div>
-                  <h3 className="pr-2 text-lg font-bold text-neutral-900">{product.name}</h3>
-                  {product.category_name && (
-                    <span className="mt-1 inline-block rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
-                      {product.category_name}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-3 border-t border-neutral-200 pt-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-neutral-600">Price</span>
-                  <span className="text-lg font-bold text-primary-600">${parseFloat(product.price).toFixed(2)}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-neutral-600">Stock</span>
-                  <div className="status-badge">
-                    {product.stock === 0 ? (
-                      <>
-                        <span className="status-unavailable">Out of Stock</span>
-                        <span className="status-dot" />
-                      </>
-                    ) : product.stock < 10 ? (
-                      <>
-                        <span className="status-low">{product.stock} remaining</span>
-                        <span className="status-dot" />
-                      </>
-                    ) : (
-                      <>
-                        <span className="status-available">{product.stock} in stock</span>
-                        <span className="status-dot" />
-                      </>
+        <>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {paginatedProducts.map((product) => (
+              <div key={product.id} className="card group cursor-pointer transition-all hover:shadow-lg">
+                <div className="mb-3 flex items-start justify-between">
+                  <div>
+                    <h3 className="pr-2 text-lg font-bold text-neutral-900">{product.name}</h3>
+                    {product.category_name && (
+                      <span className="mt-1 inline-block rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
+                        {product.category_name}
+                      </span>
                     )}
                   </div>
                 </div>
-              </div>
 
-              {product.stock === 0 && <div className="badge badge-danger mt-3 w-full justify-center">Out of Stock</div>}
-              {product.stock > 0 && product.stock < 10 && (
-                <div className="badge badge-accent mt-3 w-full justify-center">Low Stock</div>
-              )}
-              {product.stock >= 10 && <div className="badge badge-secondary mt-3 w-full justify-center">Available</div>}
+                <div className="space-y-3 border-t border-neutral-200 pt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-neutral-600">Price</span>
+                    <span className="text-lg font-bold text-primary-600">${parseFloat(product.price).toFixed(2)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-neutral-600">Stock</span>
+                    <div className="status-badge">
+                      {product.stock === 0 ? (
+                        <>
+                          <span className="status-unavailable">Out of Stock</span>
+                          <span className="status-dot" />
+                        </>
+                      ) : product.stock < 10 ? (
+                        <>
+                          <span className="status-low">{product.stock} remaining</span>
+                          <span className="status-dot" />
+                        </>
+                      ) : (
+                        <>
+                          <span className="status-available">{product.stock} in stock</span>
+                          <span className="status-dot" />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {product.stock === 0 && (
+                  <div className="badge badge-danger mt-3 w-full justify-center">Out of Stock</div>
+                )}
+                {product.stock > 0 && product.stock < 10 && (
+                  <div className="badge badge-accent mt-3 w-full justify-center">Low Stock</div>
+                )}
+                {product.stock >= 10 && (
+                  <div className="badge badge-secondary mt-3 w-full justify-center">Available</div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="card mt-6 shadow-md">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                >
+                  <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Previous
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {getPageNumbers().map((page, index) =>
+                    page === '...' ? (
+                      <span key={`ellipsis-${index}`} className="px-2 text-neutral-500">
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`min-w-[2.5rem] rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                          currentPage === page ? 'bg-primary-600 text-white' : 'text-neutral-700 hover:bg-neutral-100'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                >
+                  Next
+                  <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
