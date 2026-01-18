@@ -101,7 +101,7 @@ const Register = () => {
         {error && <div className="alert alert-error mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="form-group">
               <label htmlFor="firstname" className="form-label">
                 First Name <span className="text-red-500">*</span>

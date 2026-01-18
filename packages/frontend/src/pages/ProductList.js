@@ -176,7 +176,7 @@ const ProductList = () => {
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-neutral-900">Products</h1>
           <p className="mt-2 text-neutral-600">Manage your product inventory</p>
@@ -234,7 +234,7 @@ const ProductList = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-neutral-200 pt-4">
+        <div className="flex flex-col items-start justify-between gap-3 border-t border-neutral-200 pt-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <span className="text-sm text-neutral-600">Show</span>
             <select
