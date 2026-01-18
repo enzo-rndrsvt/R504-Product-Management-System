@@ -1,5 +1,9 @@
 # Code Quality & Testing Evaluation Project
 
+## Infos
+
+J'ai mal compris la partie "Add a proper logging system" et à la place j'ai modifié le système d'inscription au lieu de rajouter des logs
+
 ## Context
 
 You are working for a company that has recently acquired a small e-commerce project. The codebase is functional but lacks proper code quality standards, testing, and modern development practices. Your task is to improve the codebase by implementing various tools and best practices.
@@ -130,7 +134,7 @@ Remember to make Prettier and ESLint work together!
 - [ ] Add ESLint plugins for TypeScript
 - [ ] Add proper error boundaries in React
 - [ ] Implement proper state management (Redux Toolkit or Zustand)
-- [x] Add a proper logging system
+- [ ] Add a proper logging system
 - [ ] Implement proper environment variable handling
 
 ### 3. Additional Features
@@ -138,7 +142,7 @@ Remember to make Prettier and ESLint work together!
 - [x] Add product categories
 - [x] Implement product search
 - [x] Add product sorting and filtering
-- [ ] Implement pagination
+- [x] Implement pagination
 - [ ] Add user roles (admin/user)
 
 ## Project Setup
